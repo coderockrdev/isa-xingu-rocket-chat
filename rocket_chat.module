@@ -1,78 +1,84 @@
 <?php
 
-/*
+/**
+ * @file
+ * Rocket.Chat Module for Drupal 8
+ * currently supports the following Rocket.chat features/
+ * - Livechat
+ *
+ * For a Rocketchat instance checkout "https://rocket.chat/"
+ */
 
-This file is part of (rocket_chat) a Drupal 8 Module for Rocket.Chat
-Copyright (C) 2015  Houssam Jelliti <jelitihoussam@gmail.com>
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-*/
+/**
+ * Copyright (c) 2016.
+ * Authors:
+ * - Houssam Jelliti <jelitihoussam@gmail.com>
+ * - Lawri van Buël <sysosmaster@2588960.no-reply.drupal.org>
+ *
+ * This file is part of (rocket_chat) a Drupal 8 Module for Rocket.Chat
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ */
 
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Implements hook_menu().
+ * @see hook_menu()
+ * @return mixed
  */
 function rocket_chat_menu() {
-
-
   $items[(string) \Drupal::config('rocket_chat.settings')->get('path')] = array(
     'route_name' => 'path.content'
   );
-
   $items['admin/config/rocket_chat'] = array(
     'route_name' => 'rocket_chat.admin_settings'
   );
-
   return $items;
-  
 }
+
+/** @noinspection PhpUnusedParameterInspection */
 
 /**
  * Implements hook_help().
+ * @param $route_name
+ * @param RouteMatchInterface $route_match
+ * @return string
+ * @see hook_help()
  */
 function rocket_chat_help($route_name, RouteMatchInterface $route_match) {
-  	
   	if($route_name === 'rocket_chat.admin_settings'){
-  		$output = '<br>';
-  		$output .= '<h4>' . t('Welcome to rocket_chat configuration management.') . '</h4>';
-  		$output .= '<p>';
-  		$output .= t('In this section, you have permission to change your <b>livechat</b> management system.');
+  		$output = '<div class="admin admin_title title rocketchat">';
+  		$output .= '<h4>' . t('Rocket.Chat configuration management.') . '</h4>';
+  		$output .= '<div class="admin rocketchat">';
+  		$output .= t('In this section, you have permission to change your <strong>livechat</strong> management system.');
   		$output .= t(' As for now, you\'re only permitted to configure your server address as well as the server port.');
       $output .= '<br>';
-      $output .= t('If you\'re running a localserver, Rocket.Chat use <b>localhost:3000</b>, else only (http/https) protocols and (80/443) ports are allowed.');
-  		$output .= '<br>';
-  		$output .= '<br>';
-  		$output .= '<small><i>' . t('please <u>note</u> that this is the alpha version of the Rocket.Chat livechat module, more updates will be available.') . '</i></small>';	
-  		$output .= '</p>';
-  		$output .= '<br>'; 		
+      $output .= t('If you\'re running a local server, Rocket.Chat use <strong>localhost:3000</strong>, else only (http/https) protocols and (80/443) ports are allowed.');
+  		$output .= '<br><br>';
+  		$output .= '<small><em>' . t('please <strong>note</strong> that this is the alpha version of the Rocket.Chat livechat module, more updates will be available.') . '</em></small>';
+  		$output .= '</div></div>';
   		return $output;
   	}
-
+  	return ""; //No help rendered so returning an empty tring.
   }
+
+/** @noinspection PhpUnusedParameterInspection */
 
 /**
  * Implements hook_form_alter().
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ * @see hook_form_alter()
  */
-
 function rocket_chat_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
-	
 	 if($form_id === 'rocket_chat.admin_settings'){
     // when LiveChatForm get invoked..
+         //TODO implement functionality.
 	}
-	
 }
 
