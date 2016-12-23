@@ -2,11 +2,11 @@
 
 /**
  * @file
- * Rocket.Chat Module for Drupal 8
+ * Rocket.Chat Module for Drupal 8.
  * currently supports the following Rocket.chat features/
  * - Livechat
  *
- * For a Rocketchat instance checkout "https://rocket.chat/"
+ * For a Rocketchat instance checkout "https://rocket.chat/".
  */
 
 /**
