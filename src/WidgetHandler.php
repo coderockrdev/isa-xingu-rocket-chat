@@ -1,43 +1,45 @@
 <?php
 
-/*
+namespace Drupal\rocket_chat;
 
-This file is part of (rocket_chat) a Drupal 8 Module for Rocket.Chat
-Copyright (C) 2015  Houssam Jelliti <jelitihoussam@gmail.com>
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-*/
+/**
+ * Copyright (c) 2016.
+ *
+ * Authors:
+ * - Houssam Jelliti <jelitihoussam@gmail.com>.
+ * - Lawri van Buël <sysosmaster@2588960.no-reply.drupal.org>.
+ *
+ * This file is part of (rocket_chat) a Drupal 8 Module for Rocket.Chat
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 
 /**
  * @file
  * Contains \Drupal\rocket_chat\WidgetHandler.
+ *
+ * Provides handling to render the livechat widget.
  */
-
-namespace Drupal\rocket_chat;
-
-
-/**
-* Provides handling to render the livechat widget.
-*/
-
 class WidgetHandler {
+  private $widgetLibraryName;
+  private $widgetLibraryRoute;
+  private $form;
 
-  private  $widgetLibraryName, $widgetLibraryRoute, $form;
-
-
+  /**
+   * WidgetHandler constructor.
+   *
+   * @param null $widgetLibraryName
+   * @param null $widgetLibraryRoute
+   */
   public function __construct($widgetLibraryName = NULL, $widgetLibraryRoute = NULL) {
 
     if(!empty($widgetLibraryName) && !is_null($widgetLibraryName)){
