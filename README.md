@@ -10,7 +10,6 @@ CONTENTS OF THIS FILE
  * Configuration
  * Troubleshooting
  * Maintainers
- 
 
 INTRODUCTION
 ------------
