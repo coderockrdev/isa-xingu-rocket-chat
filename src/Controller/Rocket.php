@@ -48,7 +48,7 @@ class Rocket extends ControllerBase {
    */
   public function createWidget() {
     $widget = new WidgetHandler('rocket_chat', 'rocket_chat_conf');
-    return $widget->renderWidgetWithJavaScriptKeys(['server', 'port']);
+    return $widget->renderWidgetWithJavaScriptKeys(['server']);
   }
 
 }

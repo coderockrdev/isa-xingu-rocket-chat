@@ -26,13 +26,11 @@
   // Server params.
   var DEFAULT = {
     url: 'http://localhost',
-    port: '3000'
   };
   DEFAULT.toString();
 
   var USER = {
     url: drupalSettings.rocket_chat.rocket_chat_conf.server,
-    port: drupalSettings.rocket_chat.rocket_chat_conf.port
   };
 
   // The embed javascript livechat code.
@@ -43,15 +41,8 @@
     h = d.getElementsByTagName(s)[0];
     j = d.createElement(s);
     j.async = true;
-    j.src = USER['url']
-      + ':'
-      + USER['port']
-      + '/packages/rocketchat_livechat/assets/rocket-livechat.js';
+    j.src = USER['url'] + '/packages/rocketchat_livechat/assets/rocket-livechat.js';
     h.parentNode.insertBefore(j, h);
-  })(window, document, 'script', 'initRocket',
-    USER['url']
-    + ':' +
-    USER['port'] +
-    '/livechat');
+  })(window, document, 'script', USER['url'] + '/livechat');
 
 })(jQuery);

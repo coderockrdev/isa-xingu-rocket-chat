@@ -54,9 +54,7 @@ class LiveChatForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return [
-      'rocket_chat.settings',
-    ];
+    return [ 'rocket_chat.settings', ];
   }
 
   /**
@@ -68,7 +66,7 @@ class LiveChatForm extends ConfigFormBase {
 
     $form['url'] = array(
       '#type' => 'url',
-      '#title' => $this->t('Your server address:'),
+      '#title' => $this->t('The Rocket.chat server address:'),
       '#required' => TRUE,
       '#attributes' => array(
         'placeholder' => $config->get('server'),
@@ -76,15 +74,15 @@ class LiveChatForm extends ConfigFormBase {
       ),
     );
 
-    $form['ip_port'] = array(
-      '#type' => 'number',
-      '#title' => $this->t('Port:'),
-      '#required' => TRUE,
-      '#attributes' => array(
-        'placeholder' => $config->get('port'),
-        // Last saved port or just print 'port'.
-      ),
-    );
+//    $form['ip_port'] = array(
+//      '#type' => 'number',
+//      '#title' => $this->t('Port:'),
+//      '#required' => TRUE,
+//      '#attributes' => array(
+//        'placeholder' => $config->get('port'),
+//        // Last saved port or just print 'port'.
+//      ),
+//    );
 
     $form['slach_path'] = array(
       '#type' => 'textfield',
@@ -106,22 +104,20 @@ class LiveChatForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
 
     // Fields are all submitted.
-    if (!empty($form_state->getValue('url'))
-      && !empty($form_state->getValue('ip_port'))
+    if (!empty($form_state->getValue('url')) //&& !empty($form_state->getValue('ip_port'))
       && !empty($form_state->getValue('slach_path'))
     ) {
 
-      // Check if port is valid.
-      if (!FormManager::isPort(
-        (int) $form_state->getValue('ip_port')
-      )) {
-        $form_state->setErrorByName('ip_port', $this->t('Please type a correct port!'));
-      }
+//      // Check if port is valid.
+//      if (!FormManager::isPort(
+//        (int) $form_state->getValue('ip_port')
+//      )) {
+//        $form_state->setErrorByName('ip_port', $this->t('Please type a correct port!'));
+//      }
 
       // Check if host server is running.
       if (!FormManager::serverRun(
-        $form_state->getValue('url'), (int) $form_state->getValue('ip_port')
-      )) {
+        $form_state->getValue('url'))) { //, (int) $form_state->getValue('ip_port')
         $form_state->setErrorByName('url', "<div class=\"error rocketchat\">" .
           $this->t('<strong>Server is not working!</strong><br>') .
           $this->t('<em>incorrect address</em>,') . ' ' .
@@ -158,12 +154,12 @@ class LiveChatForm extends ConfigFormBase {
       )
     );
 
-    drupal_set_message(
-      $this->t(
-        'Listening on @ip_port',
-        array('@ip_port' => $form_state->getValue('ip_port'))
-      )
-    );
+//    drupal_set_message(
+//      $this->t(
+//        'Listening on @ip_port',
+//        array('@ip_port' => $form_state->getValue('ip_port'))
+//      )
+//    );
 
     drupal_set_message(
       $this->t(
@@ -177,10 +173,10 @@ class LiveChatForm extends ConfigFormBase {
       ->set('server', $form_state->getValue('url'))
       ->save();
 
-    $config
-      ->clear('port')
-      ->set('port', $form_state->getValue('ip_port'))
-      ->save();
+//    $config
+//      ->clear('port')
+//      ->set('port', $form_state->getValue('ip_port'))
+//      ->save();
 
     $config
       ->clear('path')

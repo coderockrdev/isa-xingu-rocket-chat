@@ -27,13 +27,15 @@ namespace Drupal\rocket_chat;
  * @file
  * Contains \Drupal\rocket_chat\FormManager.
  */
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\rocket_chat\Form\LiveChatForm;
 
 /**
  * Check the form values.
  */
 class FormManager {
 
-  /**
+  /* *
    * Check if given value is a port value.
    *
    * @param int $port
@@ -44,38 +46,77 @@ class FormManager {
    *
    *    TODO check for integer.
    */
-  public static function isPort($port) {
-    return ($port > 0 && $port < 65536);
-  }
+//  public static function isPort($port) {
+//    return ($port > 0 && $port < 65536);
+//  }
+
+    /**
+     * Helper function to split an URL into its base components including the underlying stream handlers.
+     *
+     * @param string $url Url to parse
+     *
+     * @return array Url in its seperated Parts.
+     *
+     * @throws \HttpUrlException when scheme is missing.
+     */
+   public static function parseUrl($url){
+       $ret = parse_url($url);
+       if(!isset($ret['scheme'])){
+//           $ret['scheme'] = 'http';
+           throw new \HttpUrlException("Missing Scheme.",404);
+       }
+       if(!isset($ret['host'])){
+           $ret['hosts'] = 'localhost';
+       }
+       if(!isset($ret['path'])){
+           $ret['path'] = "";
+       }
+       if(!isset($ret['port'])){
+           switch($ret['scheme']) {
+               case "http":
+                   $ret['port'] = 80;
+                   break;
+               case "https":
+                   $ret['port'] = 443;
+                   break;
+           }
+       }
+       $ret['baseUrl'] = $ret['host'].$ret['path'];
+       switch($ret['scheme']) {
+           default:
+               $ret['url'] = "tcp://".$ret['baseUrl'];
+               break;
+           case "https":
+               $ret['url'] = "tls://".$ret['baseUrl'];
+               break;
+       }
+       return $ret;
+   }
+
 
   /**
    * ServerRun.
    *
    * @param string $url
    *    Url to use.
-   * @param int $port
-   *    Port to use.
    *
    * @return bool
    *    Connection Worked?
    */
-  public static function serverRun($url, $port) {
-    if ($port === 80 || $port === 443 || $port === 3000) {
-      if (strpos($url, 'http://') !== FALSE) {
-        $url = str_replace('http://', '', $url);
-      }
-      elseif (strpos($url, 'https://') !== FALSE) {
-        $url = str_replace('https://', '', $url);
-      }
+  public static function serverRun($url) {
+      $urlSplit = FormManager::parseUrl($url);
+
       // Server test.
-      if ($ping = @fsockopen($url, $port, $errCode, $errStr, 1)) {
+      //$supportedStreams = stream_get_transports();
+
+      if ($ping = fsockopen($urlSplit['url'], $urlSplit['port'], $errCode, $errStr, 1)) {
         fclose($ping);
         return TRUE;
       }
       else {
         return FALSE;
       }
-    }
+      //TODO IMplement Exception!
   }
 
   /**

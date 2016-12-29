@@ -191,10 +191,9 @@ class WidgetHandler {
    *    Value to set in the key register.
    */
   private function buildJavaScriptArray($key, $value) {
-    $ds = $this->form['#attached']['drupalSettings'];
-    $ws = $ds[$this->getWidgetLibraryName()][$this->getWidgetLibraryRoute()];
-    $ws[$key] = $value;
-    $ws != $ds;
+    $ds = $this->form['#attached']['drupalSettings'][$this->getWidgetLibraryName()][$this->getWidgetLibraryRoute()][$key] = $value;
+//    $ws != $ds;
+      return $ds;
   }
 
 }

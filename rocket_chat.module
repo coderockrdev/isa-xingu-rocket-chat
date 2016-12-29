@@ -51,17 +51,14 @@ function rocket_chat_menu() {
  * Implements hook_help().
  */
 function rocket_chat_help($route_name, RouteMatchInterface $route_match) {
+  $rname = $route_match->getRouteName();
   if ($route_name === 'rocket_chat.admin_settings') {
     $output = '<div class="admin admin_title title rocketchat">';
     $output .= '<h4>' . t('Rocket.Chat configuration management.') . '</h4>';
     $output .= '<div class="admin rocketchat">';
-    $output .= t("In this section, you have permission to change your <strong>livechat</strong> management system.");
-    $output .= ' ' . t("As for now, you're only permitted to configure your server address as well as the server port.");
-    $output .= '<br>';
-    $output .= t("If you're running a local server, Rocket.Chat use <strong>localhost:3000</strong>, else only (http/https) protocols and (80/443) ports are allowed.");
-    $output .= '<br><br>';
-    $output .= '<small><em>' . t('please <strong>note</strong> that this is the alpha version of the Rocket.Chat livechat module, more updates will be available.') . '</em></small>';
-    $output .= '</div></div>';
+    $output .= t("Here you can configure the Rocket.Chat Connection details from the rocket.chat <strong>livechat</strong> system.");
+    $output .= '<br> <mark>' . t("Warning, Curently in ALPHA release, it only supports connection of the same type (so if your drupal is https your rocketchat has to be https as well.)");
+    $output .= '</mark></div></div>';
     return $output;
   }
   // No help rendered so returning an empty string.

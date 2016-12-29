@@ -38,17 +38,10 @@ class Routes {
    *   public function routes() {
    */
 
-  /**
-   * Old style constructor.
-   */
+    /**
+     * {@inheritdoc}
+     */
   public static function routes() {
-    return new Routes();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct() {
     $routes = array();
     // Declares a single route under the name 'your_path.content'.
     // Returns an array of Route objects.
