@@ -50,7 +50,8 @@ Installation
 - Rocket chat Module: 
   - Install the module in your modules folder.
   - if you have not done so already, setup Rocket chat.   (out of scope for this 
-    readme, check out [Rocket.chat](https://rocket.chat) for instructions on how to setup 
+    readme, check out [Rocket.chat](https://rocket.chat) for instructions on how
+     to setup 
     rocketchat.)
 - Livechat Module:
   - install the livechat module and rocket_chat module.
@@ -69,7 +70,9 @@ Configuration
 Troubleshooting
 ---------------
  
-Leave a detailed report of your issue in the [issue queue](https://www.drupal.org/project/issues/search/2649818) and the maintainers will add it to the task list.
+Leave a detailed report of your issue in the 
+[issue queue](https://www.drupal.org/project/issues/search/2649818) and the 
+maintainers will add it to the task list.
   
 Maintainers
 -----------

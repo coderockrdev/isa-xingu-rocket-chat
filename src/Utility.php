@@ -32,48 +32,6 @@ namespace Drupal\rocket_chat;
  */
 class Utility {
 
-    /**
-     * Helper function to split an URL into its base components including the underlying stream handlers.
-     *
-     * @param string $url Url to parse
-     *
-     * @return array Url in its separated Parts.
-     *
-     * @throws \HttpUrlException when scheme is missing.
-     */
-   public static function parseUrl($url){
-       $returnValue = parse_url($url);
-       if(!isset($returnValue['scheme'])){
-           throw new \HttpUrlException("Missing Scheme.",404);
-       }
-       if(!isset($returnValue['host'])){
-           $returnValue['hosts'] = 'localhost';
-       }
-       if(!isset($returnValue['path'])){
-           $returnValue['path'] = "";
-       }
-       if(!isset($returnValue['port'])){
-           switch($returnValue['scheme']) {
-               case "http":
-                   $returnValue['port'] = 80;
-                   break;
-               case "https":
-                   $returnValue['port'] = 443;
-                   break;
-           }
-       }
-       $returnValue['baseUrl'] = $returnValue['host'].$returnValue['path'];
-       switch($returnValue['scheme']) {
-           default:
-               $returnValue['url'] = "tcp://".$returnValue['baseUrl'];
-               break;
-           case "https":
-               $returnValue['url'] = "tls://".$returnValue['baseUrl'];
-               break;
-       }
-       return $returnValue;
-   }
-
   /**
    * ServerRun.
    *
@@ -84,19 +42,62 @@ class Utility {
    *    Connection Worked?
    */
   public static function serverRun($url) {
-      $urlSplit = Utility::parseUrl($url);
-      try {
-        if ($ping = fsockopen($urlSplit['url'], $urlSplit['port'], $errCode, $errStr, 10)) {
-          fclose($ping);
-          return TRUE;
-        }
-        else {
-          return FALSE;
-        }
-      } catch (\Exception $exception) {
-        error_log("serverRun encountered and exception, check [$url] for valid URL");
+    $urlSplit = Utility::parseUrl($url);
+    try {
+      if ($ping = fsockopen($urlSplit['url'], $urlSplit['port'], $errCode, $errStr, 10)) {
+        fclose($ping);
+        return TRUE;
+      }
+      else {
         return FALSE;
       }
+    } catch (\Exception $exception) {
+      error_log("serverRun encountered and exception, check [$url] for valid URL");
+      return FALSE;
+    }
+  }
+
+  /**
+   * Helper function to split an URL into its base components including the
+   * underlying stream handlers.
+   *
+   * @param string $url Url to parse
+   *
+   * @return array Url in its separated Parts.
+   *
+   * @throws \HttpUrlException when scheme is missing.
+   */
+  public static function parseUrl($url) {
+    $returnValue = parse_url($url);
+    if (!isset($returnValue['scheme'])) {
+      throw new \HttpUrlException("Missing Scheme.", 404);
+    }
+    if (!isset($returnValue['host'])) {
+      $returnValue['hosts'] = 'localhost';
+    }
+    if (!isset($returnValue['path'])) {
+      $returnValue['path'] = "";
+    }
+    if (!isset($returnValue['port'])) {
+      switch ($returnValue['scheme']) {
+        case "http":
+          $returnValue['port'] = 80;
+          break;
+        case "https":
+          $returnValue['port'] = 443;
+          break;
+      }
+    }
+    $returnValue['baseUrl'] = $returnValue['host'] . $returnValue['path'];
+    switch ($returnValue['scheme']) {
+      default:
+        $returnValue['url'] = "tcp://" . $returnValue['baseUrl'];
+        break;
+      case "https":
+        $returnValue['url'] = "tls://" . $returnValue['baseUrl'];
+        break;
+    }
+    return $returnValue;
   }
 
 }
