@@ -35,7 +35,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rocket_chat\Utility;
 use Drupal;
-//use Drupal\Core\Extension\ModuleHandler;
 
 /**
  * Class RocketChatSettingsForm.
@@ -55,7 +54,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return [ 'rocket_chat.settings', ];
+    return ['rocket_chat.settings'];
   }
 
   /**
