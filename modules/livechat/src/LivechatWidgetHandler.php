@@ -33,8 +33,8 @@ namespace Drupal\livechat;
  */
 
 /**
- * Class LivechatWidgetHandler
- * Glue class to make the widget dynamically build the javascript file.
+ * @Class Glue class to make the widget dynamically build the javascript file.
+ *
  * @package Drupal\livechat
  */
 class LivechatWidgetHandler {
@@ -111,7 +111,7 @@ class LivechatWidgetHandler {
    * Setter for widgetLibraryName.
    *
    * @param mixed|string $widgetLibraryName
-   *    Widget library name.
+   *   Widget library name.
    */
   public function setWidgetLibraryName($widgetLibraryName) {
     $this->widgetLibraryName = $widgetLibraryName;
@@ -192,13 +192,13 @@ class LivechatWidgetHandler {
    * e.g. drupalSettings.library.route.key.
    *
    * @param string $key
-   *    Key to set the value in.
+   *   Key to set the value in.
    * @param mixed $value
-   *    Value to set in the key register.
+   *   Value to set in the key register.
    */
   private function buildJavaScriptArray($key, $value) {
     $ds = $this->form['#attached']['drupalSettings'][$this->getWidgetLibraryName()][$this->getWidgetLibraryRoute()][$key] = $value;
-      return $ds;
+    return $ds;
   }
 
 }

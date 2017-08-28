@@ -73,8 +73,8 @@ class RocketChatSettingsForm extends ConfigFormBase {
         'placeholder' => "https://demo.rocket.chat/",
       ],
     ];
-    //Only set the value if there is a value.
-    if(!empty($server)){
+    // Only set the value if there is a value.
+    if (!empty($server)) {
       $form['url']['#value'] = $server;
     }
 
@@ -104,10 +104,6 @@ class RocketChatSettingsForm extends ConfigFormBase {
 
   }
 
-  public function __construct(\Drupal\Core\Config\ConfigFactoryInterface $config_factory) {
-    parent::__construct($config_factory);
-  }
-
   /**
    * {@inheritdoc}
    */
@@ -117,7 +113,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
 
       // Check if host server is running.
       if (!Utility::serverRun(
-        $form_state->getValue('url'))) { //, (int) $form_state->getValue('ip_port')
+        $form_state->getValue('url'))) {
         $form_state->setErrorByName('url', "<div class=\"error rocketchat\">" .
           $this->t('<strong>Server is not working!</strong><br>') .
           $this->t('<em>incorrect address</em>,') . ' ' .
@@ -137,8 +133,8 @@ class RocketChatSettingsForm extends ConfigFormBase {
 
     $oldUrl = $config->get('server');
 
-    $form_url =    $form_state->getValue('url');
-    $form_user =   $form_state->getValue('rocketchat_admin');
+    $form_url = $form_state->getValue('url');
+    $form_user = $form_state->getValue('rocketchat_admin');
     $form_secret = $form_state->getValue('rocketchat_key');
 
     if (!empty($form_url)) {
@@ -174,4 +170,5 @@ class RocketChatSettingsForm extends ConfigFormBase {
       );
     }
   }
+
 }

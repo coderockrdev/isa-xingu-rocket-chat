@@ -62,12 +62,12 @@ class Utility {
    * Helper function to split an URL into its base components.
    *
    * @param string $url
-   *   Url to parse
+   *   Url to parse.
    *
-   * @return array Url
-   *   in its separated Parts.
+   * @return array
+   *   Url in its separated Parts.
    *
-   * @throws \HttpUrlException
+   * @Throws \HttpUrlException
    *   when scheme is missing.
    */
   public static function parseUrl($url) {
