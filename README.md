@@ -78,8 +78,9 @@ Maintainers
 -----------
  
  - [sysosmaster](https://www.drupal.org/u/sysosmaster) (Current maintainer of 
-   rocketchat module on d.o.)
- - [Gabriel Engel](https://www.drupal.org/u/gabriel-engel) (Creator Rocket.chat)
- - [idevit](https://www.drupal.org/u/idevit) (Community Plumbing)
- - [jelhouss](https://www.drupal.org/u/jelhouss) (Initial Module Creator)
+   rocketchat module on d.o.).
+ - [Gabriel Engel](https://www.drupal.org/u/gabriel-engel) (Creator Rocket.chat
+   ).
+ - [idevit](https://www.drupal.org/u/idevit) (Community Plumbing).
+ - [jelhouss](https://www.drupal.org/u/jelhouss) (Initial Module Creator).
  

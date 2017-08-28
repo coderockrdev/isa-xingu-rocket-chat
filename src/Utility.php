@@ -36,10 +36,10 @@ class Utility {
    * ServerRun.
    *
    * @param string $url
-   *    Url to use.
+   *   Url to use.
    *
    * @return bool
-   *    Connection Worked?
+   *   Connection Worked?
    */
   public static function serverRun($url) {
     $urlSplit = Utility::parseUrl($url);
@@ -51,21 +51,24 @@ class Utility {
       else {
         return FALSE;
       }
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
       error_log("serverRun encountered and exception, check [$url] for valid URL");
       return FALSE;
     }
   }
 
   /**
-   * Helper function to split an URL into its base components including the
-   * underlying stream handlers.
+   * Helper function to split an URL into its base components.
    *
-   * @param string $url Url to parse
+   * @param string $url
+   *   Url to parse
    *
-   * @return array Url in its separated Parts.
+   * @return array Url
+   *   in its separated Parts.
    *
-   * @throws \HttpUrlException when scheme is missing.
+   * @throws \HttpUrlException
+   *   when scheme is missing.
    */
   public static function parseUrl($url) {
     $returnValue = parse_url($url);
@@ -83,9 +86,11 @@ class Utility {
         case "http":
           $returnValue['port'] = 80;
           break;
+
         case "https":
           $returnValue['port'] = 443;
           break;
+
       }
     }
     $returnValue['baseUrl'] = $returnValue['host'] . $returnValue['path'];
@@ -93,9 +98,11 @@ class Utility {
       default:
         $returnValue['url'] = "tcp://" . $returnValue['baseUrl'];
         break;
+
       case "https":
         $returnValue['url'] = "tls://" . $returnValue['baseUrl'];
         break;
+
     }
     return $returnValue;
   }

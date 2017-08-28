@@ -65,21 +65,21 @@ class RocketChatSettingsForm extends ConfigFormBase {
     $config = $this->config('rocket_chat.settings');
     $server = $config->get('server');
 
-    $form['url'] = array(
+    $form['url'] = [
       '#type' => 'url',
       '#title' => $this->t('The Rocket.chat server address:'),
       '#required' => TRUE,
-      '#attributes' => array(
+      '#attributes' => [
         'placeholder' => "https://demo.rocket.chat/",
-      ),
-    );
+      ],
+    ];
     //Only set the value if there is a value.
     if(!empty($server)){
       $form['url']['#value'] = $server;
     }
 
-    //Only add the following when the rocket_chat_api module is enabled.
-    if($moduleHandler->moduleExists('rocket_chat_api')) {
+    // Only add the following when the rocket_chat_api module is enabled.
+    if ($moduleHandler->moduleExists('rocket_chat_api')) {
       $form['rocketchat_admin'] = [
         '#type' => 'password',
         '#description' => $this->t("Rocket chat Admin login name (for API use)"),
@@ -141,7 +141,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
     $form_user =   $form_state->getValue('rocketchat_admin');
     $form_secret = $form_state->getValue('rocketchat_key');
 
-    if(!empty($form_url)) {
+    if (!empty($form_url)) {
       $config
         ->clear('server')
         ->set('server', $form_url)
@@ -154,7 +154,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       );
     }
 
-    if(!empty($form_user)){
+    if (!empty($form_user)){
       $config
         ->clear('user')
         ->set('user', $form_user)
@@ -164,7 +164,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       );
     }
 
-    if(!empty($form_secret)){
+    if (!empty($form_secret)){
       $config
         ->clear('secret')
         ->set('secret', $form_secret)
