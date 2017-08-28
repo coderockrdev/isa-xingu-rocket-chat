@@ -6,7 +6,6 @@ namespace Drupal\rocket_chat;
  * Copyright (c) 2016.
  *
  * Authors:
- * - Houssam Jelliti <jelitihoussam@gmail.com>.
  * - Lawri van Buël <sysosmaster@2588960.no-reply.drupal.org>.
  *
  * This file is part of (rocket_chat) a Drupal 8 Module for Rocket.Chat
@@ -27,28 +26,11 @@ namespace Drupal\rocket_chat;
  * @file
  * Contains \Drupal\rocket_chat\FormManager.
  */
-use Drupal\Component\Utility\UrlHelper;
-use Drupal\rocket_chat\Form\LiveChatForm;
 
 /**
  * Check the form values.
  */
-class FormManager {
-
-  /* *
-   * Check if given value is a port value.
-   *
-   * @param int $port
-   *    Port to check.
-   *
-   * @return bool
-   *    True if in range false if not.
-   *
-   *    TODO check for integer.
-   */
-//  public static function isPort($port) {
-//    return ($port > 0 && $port < 65536);
-//  }
+class Utility {
 
     /**
      * Helper function to split an URL into its base components including the underlying stream handlers.
@@ -60,39 +42,37 @@ class FormManager {
      * @throws \HttpUrlException when scheme is missing.
      */
    public static function parseUrl($url){
-       $ret = parse_url($url);
-       if(!isset($ret['scheme'])){
-//           $ret['scheme'] = 'http';
+       $returnValue = parse_url($url);
+       if(!isset($returnValue['scheme'])){
            throw new \HttpUrlException("Missing Scheme.",404);
        }
-       if(!isset($ret['host'])){
-           $ret['hosts'] = 'localhost';
+       if(!isset($returnValue['host'])){
+           $returnValue['hosts'] = 'localhost';
        }
-       if(!isset($ret['path'])){
-           $ret['path'] = "";
+       if(!isset($returnValue['path'])){
+           $returnValue['path'] = "";
        }
-       if(!isset($ret['port'])){
-           switch($ret['scheme']) {
+       if(!isset($returnValue['port'])){
+           switch($returnValue['scheme']) {
                case "http":
-                   $ret['port'] = 80;
+                   $returnValue['port'] = 80;
                    break;
                case "https":
-                   $ret['port'] = 443;
+                   $returnValue['port'] = 443;
                    break;
            }
        }
-       $ret['baseUrl'] = $ret['host'].$ret['path'];
-       switch($ret['scheme']) {
+       $returnValue['baseUrl'] = $returnValue['host'].$returnValue['path'];
+       switch($returnValue['scheme']) {
            default:
-               $ret['url'] = "tcp://".$ret['baseUrl'];
+               $returnValue['url'] = "tcp://".$returnValue['baseUrl'];
                break;
            case "https":
-               $ret['url'] = "tls://".$ret['baseUrl'];
+               $returnValue['url'] = "tls://".$returnValue['baseUrl'];
                break;
        }
-       return $ret;
+       return $returnValue;
    }
-
 
   /**
    * ServerRun.
@@ -104,32 +84,19 @@ class FormManager {
    *    Connection Worked?
    */
   public static function serverRun($url) {
-      $urlSplit = FormManager::parseUrl($url);
-
-      // Server test.
-      //$supportedStreams = stream_get_transports();
-
-      if ($ping = fsockopen($urlSplit['url'], $urlSplit['port'], $errCode, $errStr, 1)) {
-        fclose($ping);
-        return TRUE;
-      }
-      else {
+      $urlSplit = Utility::parseUrl($url);
+      try {
+        if ($ping = fsockopen($urlSplit['url'], $urlSplit['port'], $errCode, $errStr, 10)) {
+          fclose($ping);
+          return TRUE;
+        }
+        else {
+          return FALSE;
+        }
+      } catch (\Exception $exception) {
+        error_log("serverRun encountered and exception, check [$url] for valid URL");
         return FALSE;
       }
-      //TODO IMplement Exception!
-  }
-
-  /**
-   * Check for lowercase.
-   *
-   * @param string $value
-   *    Value to check.
-   *
-   * @return bool
-   *    Result.
-   */
-  public static function isLowerCaseLetters($value) {
-    return ctype_lower($value);
   }
 
 }

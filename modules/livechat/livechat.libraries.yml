@@ -2,7 +2,7 @@
 rocket_chat_conf:
   version: 1.x
   js:
-    js/app.js: {}
+    js/livechat.js: {}
   dependencies:
     - core/jquery
     - core/drupalSettings

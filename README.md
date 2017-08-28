@@ -15,51 +15,56 @@ INTRODUCTION
 ------------
 
 The Rocket.chat Module enables a drupal site to integrate Rocket.chat.  
-it is currently in its ___ALPHA___ state.
-The following Features of rocket chat are imiplemented. 
+It consits of several modules:
 
- * A page with the Livechat widget.
-   This widget offer you the ability to communicate with
-   your website 'guests'.
+ - [Rocket chat](rocket_chat): The base module that holds the configuration.
+ - [Live chat](livechat): the Live chat module contains a block you can place to
+  have the rocketchat livechat widget on a page you can control as a block. 
 
-
+ 
 Requirements
 ------------
 
 This module is designed for:
- - [Drupal 8.2.4+](https://www.drupal.org/project/drupal)
- - [Rocket.chat 0.48.1+](https://rocket.chat/)
+ - [Drupal 8](https://www.drupal.org/project/drupal)
+ - [Rocket.chat 0.58+](https://rocket.chat/)
 
 It is tested with:
- - Drupal 8.2.4
- - Rocket.chat 0.48.1
- 
-It needs the following Rocket.chat modules enabled and configured.
- - Livechat
+ - Drupal 8.3.7
+ - Rocket.chat 0.58.0
 
 Recommendations
 ---------------
 
-We strongly recommand you run your Drupal and your Rocket.chat behind a TLS/SSL proxy or webserver.
-Currently it will only work when both the website and the webapp are in the same type of connection.
-(so the drupal and rocket.chat are both reachable either over HTTP or HTTPS not one with HTTP and the other with HTTPS)
+We strongly recommend you run your Drupal and your Rocket.chat behind a TLS 
+proxy or webserver with TLS capabilities.  
+When using this module beware of HTTPS<->HTTP crossovers, they often just do not
+ work and for this reason we recommand you trun both services under TLS.  
+In order to use the livechat functionality you need to enable livechat on your 
+rocket.chat instance, or you will not see anything.
 
-Furthermre we recommand you configure the Livechat to use Agents, and have some agents in the User mangement section of Livechat.
 
 Installation
 ------------
 
-- Install the module in your modules folder, then clear cache
-- Submit installation on your website configuration, clear cache
-- Switch to [web-site-url]/admin/config/rocket_chat and fill the config form,
-  then clear cache (one more time)
-- Visit [web-site-url]/[path-chosen] then the widget will appear 
+- Rocket chat Module: 
+  - Install the module in your modules folder.
+  - if you have not done so allready, setup Rocket chat.   (out of scope for this 
+    readme, check out [Rocket.chat](https://rocket.chat) for instructions on how to setup 
+    rocketchat.)
+- Livechat Module:
+  - install the livechat module and rocket_chat module.
+  - Setup the rocket_chat module.
+  - Go to [Structure][Block layout]. there you can place the livechat block 
+    using the "Place block" button.
+    This works as a normal block we recommand you add it to a footer or alike 
+    for performance.    
 
 Configuration
 -------------
 
-in the Configuration of the module (located under the 'Web services' in the configuration tab.)
- you set the address of the Rocket.chat server and the Patch on the drupal where the widget is enabled.
+- Configure your rocketchat url in [drupal-url]/admin/config/rocket_chat , you 
+  will need to have the proper permissions! 
  
 Troubleshooting
 ---------------
@@ -69,7 +74,9 @@ Leave a detailed report of your issue in the [issue queue](https://www.drupal.or
 Maintainers
 -----------
  
+ - [sysosmaster](https://www.drupal.org/u/sysosmaster) (Current maintainer of 
+   rocketchat module on d.o.)
  - [Gabriel Engel](https://www.drupal.org/u/gabriel-engel) (Creator Rocket.chat)
- - [jelhouss](https://www.drupal.org/u/jelhouss) (Initial Module Creator)
  - [idevit](https://www.drupal.org/u/idevit) (Community Plumbing)
- - [sysosmaster](https://www.drupal.org/u/sysosmaster) (finalized first alpha release on d.o.)
+ - [jelhouss](https://www.drupal.org/u/jelhouss) (Initial Module Creator)
+ 

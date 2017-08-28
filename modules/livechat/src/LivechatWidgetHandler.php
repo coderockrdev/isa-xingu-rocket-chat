@@ -1,13 +1,15 @@
 <?php
 
-namespace Drupal\rocket_chat;
+namespace Drupal\livechat;
 
 /**
  * Copyright (c) 2016.
  *
  * Authors:
- * - Houssam Jelliti <jelitihoussam@gmail.com>.
  * - Lawri van Buël <sysosmaster@2588960.no-reply.drupal.org>.
+ *
+ * Based on the work of:
+ * - Houssam Jelliti <jelitihoussam@gmail.com>.
  *
  * This file is part of (rocket_chat) a Drupal 8 Module for Rocket.Chat
  * This program is free software; you can redistribute it and/or modify it under
@@ -29,7 +31,7 @@ namespace Drupal\rocket_chat;
  *
  * Provides handling to render the livechat widget.
  */
-class WidgetHandler {
+class LivechatWidgetHandler {
 
   /**
    * WidgetLibraryName.
@@ -160,7 +162,7 @@ class WidgetHandler {
    * @param string $key
    *   String representing the key.
    *
-   *   TODO Reimplement this!
+   * @TODO Extend this to include Department setting and theme setting.
    */
   private function setJavascriptParams($key) {
     if (!empty($key) && !is_null($key)) {
@@ -169,10 +171,8 @@ class WidgetHandler {
           $this->buildJavaScriptArray('server', \Drupal::config('rocket_chat.settings')->get('server'));
           break;
 
-        case 'port':
-          $this->buildJavaScriptArray('port', \Drupal::config('rocket_chat.settings')->get('port'));
-          break;
-
+        default:
+          return;
       }
     }
   }
@@ -192,7 +192,6 @@ class WidgetHandler {
    */
   private function buildJavaScriptArray($key, $value) {
     $ds = $this->form['#attached']['drupalSettings'][$this->getWidgetLibraryName()][$this->getWidgetLibraryRoute()][$key] = $value;
-//    $ws != $ds;
       return $ds;
   }
 

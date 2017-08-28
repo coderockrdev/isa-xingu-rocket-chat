@@ -6,7 +6,6 @@ namespace Drupal\rocket_chat\Form;
  * Copyright (c) 2016.
  *
  * Authors:
- * - Houssam Jelliti <jelitihoussam@gmail.com>.
  * - Lawri van Buël <sysosmaster@2588960.no-reply.drupal.org>.
  *
  * This file is part of (rocket_chat) a Drupal 8 Module for Rocket.Chat
@@ -25,23 +24,24 @@ namespace Drupal\rocket_chat\Form;
 
 /**
  * @file
- * Contains \Drupal\rocket_chat\Form\LiveChatForm.
+ * Contains \Drupal\rocket_chat\Form\RocketChatSettingsForm.
  *
  * The ConfigFormBase required class for module configuration.
  * Any configuration enhancement must be done within.
  */
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rocket_chat\FormManager;
+use Drupal\rocket_chat\Utility;
 
 /**
- * Class LiveChatForm.
+ * Class RocketChatSettingsForm.
  *
  * @package Drupal\rocket_chat\Form
  */
-class LiveChatForm extends ConfigFormBase {
+class RocketChatSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
@@ -61,73 +61,68 @@ class LiveChatForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, Request $request = NULL) {
-
+    $moduleHandler = \Drupal::service('module_handler');
     $config = $this->config('rocket_chat.settings');
+    $server = $config->get('server');
 
     $form['url'] = array(
       '#type' => 'url',
       '#title' => $this->t('The Rocket.chat server address:'),
       '#required' => TRUE,
       '#attributes' => array(
-        'placeholder' => $config->get('server'),
-        // Last saved server or just print 'server'.
+        'placeholder' => "https://demo.rocket.chat/",
       ),
     );
+    //Only set the value if there is a value.
+    if(!empty($server)){
+      $form['url']['#value'] = $server;
+    }
 
-//    $form['ip_port'] = array(
-//      '#type' => 'number',
-//      '#title' => $this->t('Port:'),
-//      '#required' => TRUE,
-//      '#attributes' => array(
-//        'placeholder' => $config->get('port'),
-//        // Last saved port or just print 'port'.
-//      ),
-//    );
-
-    $form['slach_path'] = array(
-      '#type' => 'textfield',
-      '#title' => $this->t('Path:'),
-      '#required' => TRUE,
-      '#attributes' => array(
-        'placeholder' => $config->get('path'),
-        // Last saved path or just print 'e.g. mypath'.
-      ),
-    );
+    //Only add the following when the rocket_chat_api module is enabled.
+    if($moduleHandler->moduleExists('rocket_chat_api')) {
+      $form['rocketchat_admin'] = [
+        '#type' => 'password',
+        '#description' => "Rocket chat Admin login name (for API use)",
+        '#title' => $this->t('Rocketchat Admin User:'),
+        '#required' => FALSE,
+        '#attributes' => [
+          'placeholder' => 'RocketChat Admin User',
+        ],
+      ];
+      $form['rocketchat_key'] = [
+        '#type' => 'password',
+        '#title' => $this->t('Rocketchat Admin Password:'),
+        '#description' => "Rocket chat Admin login password (for API use)",
+        '#required' => FALSE,
+        '#attributes' => [
+          'placeholder' => '****************',
+        ],
+      ];
+    }
 
     return parent::buildForm($form, $form_state);
 
+  }
+
+  public function __construct(\Drupal\Core\Config\ConfigFactoryInterface $config_factory) {
+    parent::__construct($config_factory);
   }
 
   /**
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-
-    // Fields are all submitted.
-    if (!empty($form_state->getValue('url')) //&& !empty($form_state->getValue('ip_port'))
-      && !empty($form_state->getValue('slach_path'))
-    ) {
-
-//      // Check if port is valid.
-//      if (!FormManager::isPort(
-//        (int) $form_state->getValue('ip_port')
-//      )) {
-//        $form_state->setErrorByName('ip_port', $this->t('Please type a correct port!'));
-//      }
+    $values = $form_state->getValues();
+    // All requirerd fields are submitted.
+    if (!empty($form_state->getValue('url'))) {
 
       // Check if host server is running.
-      if (!FormManager::serverRun(
+      if (!Utility::serverRun(
         $form_state->getValue('url'))) { //, (int) $form_state->getValue('ip_port')
         $form_state->setErrorByName('url', "<div class=\"error rocketchat\">" .
           $this->t('<strong>Server is not working!</strong><br>') .
           $this->t('<em>incorrect address</em>,') . ' ' .
           $this->t('please check your server and your port.') . '</div>');
-      }
-
-      if (!FormManager::isLowerCaseLetters(
-        $form_state->getValue('slach_path')
-      )) {
-        $form_state->setErrorByName('slach_path', $this->t('Please type a lowercase letter path'));
       }
 
     }
@@ -141,48 +136,43 @@ class LiveChatForm extends ConfigFormBase {
 
     $config = $this->config('rocket_chat.settings');
 
-    drupal_set_message(
-      $this->t(
-        '<b>Clear-Cache your site.</b>'
-      )
-    );
+    $oldUrl = $config->get('server');
 
-    drupal_set_message(
-      $this->t(
-        'Your server address is @url',
-        array('@url' => $form_state->getValue('url'))
-      )
-    );
+    $form_url =    $form_state->getValue('url');
+    $form_user =   $form_state->getValue('rocketchat_admin');
+    $form_secret = $form_state->getValue('rocketchat_key');
 
-//    drupal_set_message(
-//      $this->t(
-//        'Listening on @ip_port',
-//        array('@ip_port' => $form_state->getValue('ip_port'))
-//      )
-//    );
+    if(!empty($form_url)) {
+      $config
+        ->clear('server')
+        ->set('server', $form_url)
+        ->save();
+      drupal_set_message(
+        $this->t(
+          'Updated the Rocketchat [@oldurl] -> [@url]',
+          ['@url' => $form_url, "@oldurl" => (empty($oldUrl) ? t("Not Set") : $oldUrl)]
+        )
+      );
+    }
 
-    drupal_set_message(
-      $this->t(
-        'Access the widget @yoursite/@slach_path',
-        array('@slach_path' => $form_state->getValue('slach_path'))
-      )
-    );
+    if(!empty($form_user)){
+      $config
+        ->clear('user')
+        ->set('user', $form_user)
+        ->save();
+      drupal_set_message(
+        $this->t('Updated the Rocketchat Admin User')
+      );
+    }
 
-    $config
-      ->clear('server')
-      ->set('server', $form_state->getValue('url'))
-      ->save();
-
-//    $config
-//      ->clear('port')
-//      ->set('port', $form_state->getValue('ip_port'))
-//      ->save();
-
-    $config
-      ->clear('path')
-      ->set('path', $form_state->getValue('slach_path'))
-      ->save();
-
+    if(!empty($form_secret)){
+      $config
+        ->clear('secret')
+        ->set('secret', $form_secret)
+        ->save();
+      drupal_set_message(
+        $this->t('Updated the Rocketchat Admin Password')
+      );
+    }
   }
-
 }

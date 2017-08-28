@@ -4,9 +4,10 @@
  * Copyright (c) 2016.
  *
  * Authors:
- * - Houssam Jelliti <jelitihoussam@gmail.com>.
  * - Lawri van Buël <sysosmaster@2588960.no-reply.drupal.org>.
  *
+ * Based on the work of:
+ * - Houssam Jelliti <jelitihoussam@gmail.com>.
  * This file is part of (rocket_chat) a Drupal 8 Module for Rocket.Chat
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -30,7 +31,7 @@
   DEFAULT.toString();
 
   var USER = {
-    url: drupalSettings.rocket_chat.rocket_chat_conf.server,
+    url: drupalSettings.livechat.rocket_chat_conf.server,
   };
 
   // The embed javascript livechat code.

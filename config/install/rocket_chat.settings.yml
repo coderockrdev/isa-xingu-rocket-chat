@@ -1,3 +1,9 @@
-# The module configuration file
+#Rocketchat URL
 server:
-path: 
+
+#Rocketchat Admin user
+user:
+
+#Rocketchat Admin User Access Secret
+secret:
+

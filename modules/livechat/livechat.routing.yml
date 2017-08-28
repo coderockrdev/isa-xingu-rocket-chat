@@ -1,0 +1,7 @@
+livechat.description:
+  path: '/admin/structure/block'
+  defaults:
+    _controller: '\Drupal\livechat\Controller\LivechatBlockController::description'
+    _title: 'Rocketchat Livechat Block configuration'
+  requirements:
+    _permission: 'Administer blocks'

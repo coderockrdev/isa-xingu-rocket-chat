@@ -1,14 +1,11 @@
 <?php
 
-namespace Drupal\rocket_chat\Routing;
-
-use Symfony\Component\Routing\Route;
+namespace Drupal\livechat\Controller;
 
 /**
  * Copyright (c) 2016.
  *
  * Authors:
- * - Houssam Jelliti <jelitihoussam@gmail.com>.
  * - Lawri van Buël <sysosmaster@2588960.no-reply.drupal.org>.
  *
  * This file is part of (rocket_chat) a Drupal 8 Module for Rocket.Chat
@@ -27,38 +24,30 @@ use Symfony\Component\Routing\Route;
 
 /**
  * @file
- * Contains \Drupal\rocket_chat\Routing\Routes.
+ * Contains \Drupal\rocket_chat\Controller\Rocket.
+ *
+ * The main controller of our module.
  */
+
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\livechat\LivechatWidgetHandler;
 
 /**
- * Defines dynamic routes, instead of making static routes within .routing.yml.
+ * Class Rocket extands ControllerBase.
+ *
+ * @package Drupal\rocket_chat\Controller
  */
-class Routes {
-  /*
-   *   public function routes() {
+class LivechatWidgetcontroller extends ControllerBase {
+
+  /**
+   * Create widget.
+   *
+   * @return array
+   *    Rendered widget.
    */
-
-    /**
-     * {@inheritdoc}
-     */
-  public static function routes() {
-    $routes = array();
-    // Declares a single route under the name 'your_path.content'.
-    // Returns an array of Route objects.
-    $routes['path.content'] = new Route(
-      // Path to attach this route to:
-      '/' . \Drupal::config('rocket_chat.settings')->get('path'),
-      // Route defaults:
-      array(
-        '_controller' => '\Drupal\rocket_chat\Controller\Rocket::createWidget',
-      ),
-      // Route requirements:
-      array(
-        '_permission'  => 'access content',
-      )
-    );
-
-    return $routes;
+  public function createWidget() {
+    $widget = new LivechatWidgetHandler('rocket_chat', 'rocket_chat_conf');
+    return $widget->renderWidgetWithJavaScriptKeys(['server']);
   }
 
 }

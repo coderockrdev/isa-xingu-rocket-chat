@@ -1,5 +1,5 @@
-name: rocket_chat
-description: Rocket.Chat Livechat integration module.
+name: Rocket Chat
+description: Rocket.Chat integration module.
 package: Rocket.Chat
 configure: rocket_chat.admin_settings
 type: module
