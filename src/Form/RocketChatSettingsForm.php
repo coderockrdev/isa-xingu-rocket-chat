@@ -150,7 +150,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       );
     }
 
-    if (!empty($form_user)){
+    if (!empty($form_user)) {
       $config
         ->clear('user')
         ->set('user', $form_user)
@@ -160,7 +160,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       );
     }
 
-    if (!empty($form_secret)){
+    if (!empty($form_secret)) {
       $config
         ->clear('secret')
         ->set('secret', $form_secret)
