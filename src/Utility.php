@@ -37,7 +37,7 @@ class Utility {
      *
      * @param string $url Url to parse
      *
-     * @return array Url in its seperated Parts.
+     * @return array Url in its separated Parts.
      *
      * @throws \HttpUrlException when scheme is missing.
      */

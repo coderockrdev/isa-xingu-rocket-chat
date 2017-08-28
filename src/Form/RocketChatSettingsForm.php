@@ -30,11 +30,11 @@ namespace Drupal\rocket_chat\Form;
  * Any configuration enhancement must be done within.
  */
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rocket_chat\Utility;
+use Drupal;
 
 /**
  * Class RocketChatSettingsForm.
@@ -61,7 +61,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, Request $request = NULL) {
-    $moduleHandler = \Drupal::service('module_handler');
+    $moduleHandler = Drupal::service('module_handler');
     $config = $this->config('rocket_chat.settings');
     $server = $config->get('server');
 
@@ -82,7 +82,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
     if($moduleHandler->moduleExists('rocket_chat_api')) {
       $form['rocketchat_admin'] = [
         '#type' => 'password',
-        '#description' => "Rocket chat Admin login name (for API use)",
+        '#description' => $this->t("Rocket chat Admin login name (for API use)"),
         '#title' => $this->t('Rocketchat Admin User:'),
         '#required' => FALSE,
         '#attributes' => [
@@ -92,7 +92,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       $form['rocketchat_key'] = [
         '#type' => 'password',
         '#title' => $this->t('Rocketchat Admin Password:'),
-        '#description' => "Rocket chat Admin login password (for API use)",
+        '#description' => $this->t("Rocket chat Admin login password (for API use)"),
         '#required' => FALSE,
         '#attributes' => [
           'placeholder' => '****************',

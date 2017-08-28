@@ -49,7 +49,7 @@ Installation
 
 - Rocket chat Module: 
   - Install the module in your modules folder.
-  - if you have not done so allready, setup Rocket chat.   (out of scope for this 
+  - if you have not done so already, setup Rocket chat.   (out of scope for this 
     readme, check out [Rocket.chat](https://rocket.chat) for instructions on how to setup 
     rocketchat.)
 - Livechat Module:

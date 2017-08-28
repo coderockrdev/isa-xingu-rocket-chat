@@ -26,12 +26,12 @@
   'use strict';
   // Server params.
   var DEFAULT = {
-    url: 'http://localhost',
+    url: 'http://localhost'
   };
   DEFAULT.toString();
 
   var USER = {
-    url: drupalSettings.livechat.rocket_chat_conf.server,
+    url: drupalSettings.livechat.rocket_chat_conf.server
   };
 
   // The embed javascript livechat code.
