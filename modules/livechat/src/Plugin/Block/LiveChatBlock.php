@@ -14,14 +14,15 @@ use Drupal\livechat\LivechatWidgetHandler;
  *   category = @Translation("RocketChat"),
  * )
  */
-class LiveChatBlock extends BlockBase{
+class LiveChatBlock extends BlockBase {
+
   /**
    * {@inheritdoc}
    */
   public function build() {
-    $LivechatWidget = new LivechatWidgetHandler('livechat', 'rocket_chat_conf');
-    $block = $LivechatWidget->renderWidgetWithJavaScriptKeys(['server']);
-    $block['#cache'] = [ 'max-age' => 0];
+    $livechatWidget = new LivechatWidgetHandler('livechat', 'rocket_chat_conf');
+    $block = $livechatWidget->renderWidgetWithJavaScriptKeys(['server']);
+    $block['#cache'] = ['max-age' => 0];
     return $block;
   }
 
@@ -31,4 +32,5 @@ class LiveChatBlock extends BlockBase{
   public function defaultConfiguration() {
     return ['label_display' => FALSE];
   }
+
 }

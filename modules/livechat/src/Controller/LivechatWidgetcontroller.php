@@ -43,7 +43,7 @@ class LivechatWidgetcontroller extends ControllerBase {
    * Create widget.
    *
    * @return array
-   *    Rendered widget.
+   *   Rendered widget.
    */
   public function createWidget() {
     $widget = new LivechatWidgetHandler('rocket_chat', 'rocket_chat_conf');
