@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rocket_chat\Utility;
 use Drupal;
+//use Drupal\Core\Extension\ModuleHandler;
 
 /**
  * Class RocketChatSettingsForm.
@@ -112,7 +113,6 @@ class RocketChatSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $values = $form_state->getValues();
     // All requirerd fields are submitted.
     if (!empty($form_state->getValue('url'))) {
 
@@ -150,7 +150,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       drupal_set_message(
         $this->t(
           'Updated the Rocketchat [@oldurl] -> [@url]',
-          ['@url' => $form_url, "@oldurl" => (empty($oldUrl) ? t("Not Set") : $oldUrl)]
+          ['@url' => $form_url, "@oldurl" => (empty($oldUrl) ? $this->t("Not Set") : $oldUrl)]
         )
       );
     }
