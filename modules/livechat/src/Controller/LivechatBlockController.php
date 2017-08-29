@@ -15,11 +15,11 @@ class LivechatBlockController {
   }
 
   /**
-  * Generate a render array with our templated content.
-  *
-  * @return array
-  *   A render array.
-  */
+   * Generate a render array with our templated content.
+   *
+   * @return array
+   *   A render array.
+   */
   public function description() {
     $template_path = $this->getDescriptionTemplatePath();
     $template = file_get_contents($template_path);
