@@ -14,7 +14,7 @@ class LivechatBlockController {
     return 'livechat';
   }
 
-    /**
+ /**
    * Generate a render array with our templated content.
    *
    * @return array
@@ -43,6 +43,5 @@ class LivechatBlockController {
 
     return drupal_get_path('module', $this->getModuleName()) . "/templates/description.html.twig";
   }
-
 
 }
