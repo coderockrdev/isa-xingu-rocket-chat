@@ -45,7 +45,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  */
 class RocketChatSettingsForm extends ConfigFormBase {
 
-   private $moduleHandler;
+  private $moduleHandler;
 
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
@@ -55,7 +55,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The ModuleHandler to interact with loaded modules.
    */
-  public function __construct(ConfigFactoryInterface $config_factory,ModuleHandlerInterface  $moduleHandler) {//ConfigFactoryInterface
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler) {
     parent::__construct($config_factory);
     $this->moduleHandler = $moduleHandler;
   }
@@ -105,7 +105,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       $form['url']['#value'] = $server;
     }
 
-     // Only add the following when the rocket_chat_api module is enabled.
+    // Only add the following when the rocket_chat_api module is enabled.
     if ($this->moduleHandler->moduleExists('rocket_chat_api')) {
       $form['rocketchat_admin'] = [
         '#type' => 'password',
