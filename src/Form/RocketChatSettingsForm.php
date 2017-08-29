@@ -31,10 +31,12 @@ namespace Drupal\rocket_chat\Form;
  */
 
 use Drupal\Core\Form\ConfigFormBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rocket_chat\Utility;
-use Drupal;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class RocketChatSettingsForm.
@@ -42,6 +44,31 @@ use Drupal;
  * @package Drupal\rocket_chat\Form
  */
 class RocketChatSettingsForm extends ConfigFormBase {
+
+   private $moduleHandler;
+
+  /**
+   * Constructs a \Drupal\system\ConfigFormBase object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The ModuleHandler to interact with loaded modules.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory,ModuleHandlerInterface  $moduleHandler) {//ConfigFactoryInterface
+    parent::__construct($config_factory);
+    $this->moduleHandler = $moduleHandler;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('module_handler')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -61,7 +88,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, Request $request = NULL) {
-    $moduleHandler = Drupal::service('module_handler');
+
     $config = $this->config('rocket_chat.settings');
     $server = $config->get('server');
 
@@ -78,8 +105,8 @@ class RocketChatSettingsForm extends ConfigFormBase {
       $form['url']['#value'] = $server;
     }
 
-    // Only add the following when the rocket_chat_api module is enabled.
-    if ($moduleHandler->moduleExists('rocket_chat_api')) {
+     // Only add the following when the rocket_chat_api module is enabled.
+    if ($this->moduleHandler->moduleExists('rocket_chat_api')) {
       $form['rocketchat_admin'] = [
         '#type' => 'password',
         '#description' => $this->t("Rocket chat Admin login name (for API use)"),
