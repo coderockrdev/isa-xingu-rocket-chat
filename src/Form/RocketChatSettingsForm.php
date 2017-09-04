@@ -36,6 +36,8 @@ use Drupal\rocket_chat_api\RocketChat\ApiClient;
 use Drupal\rocket_chat_api\RocketChat\Drupal8Config;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rocket_chat\Utility;
@@ -50,6 +52,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 class RocketChatSettingsForm extends ConfigFormBase {
 
   private $moduleHandler;
+  private $state;
+
   private $state;
 
   /**

@@ -16,6 +16,19 @@ namespace Drupal\rocket_chat_api\RocketChat {
    */
 
   /**
+   * This name space will hold all of our Rocket Chat specific code.
+   * Namespaces are a great way to make sure we do not have collisions of our
+   * code with some other part of the system.
+   */
+
+  /*
+   * Created by 040lab b.v. using PhpStorm from Jetbrains.
+   * User: Lawri van Buël
+   * Date: 07/03/17
+   * Time: 11:22
+   */
+
+  /**
    * We utilize Guzzle for the heavy lifting of the HTTP calls themselves due
    * to
    * speed of operations and easy of use. We could also have used plain cUrl
@@ -50,7 +63,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     private $client;
 
     /**
-     * @var Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface
+     * @var Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface 
      *   RocketChatConfigInterface object.
      */
     private $config;
@@ -156,6 +169,110 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @param string $methode
      *   The methode to call (so the part after '/api/v1/').
      * @param array $options
+     *   Optional Data payload. for HTTP_POST calls.
+     *
+     * @return array
+     *   Result array.
+     */
+    public function postToRocketChat($methode = "info", array $options = NULL) {
+      return $this->sendToRocketChat(ApiClient::HTTP_POST, $methode, $options);
+    }
+
+    /**
+     * Simple low level helper to GET or POST to the rocketchat.
+     *
+     * @param ApiClient::HTTP_GET|ApiClient::HTTP_POST $httpVerb
+     *   one of the HTTP_* Verbs to use for this call.
+     * @param string $methode
+     *   The methode to call (so the part after '/api/v1/').
+     * @param array $options
+     *   Optional Data payload. for HTTP_POST calls.
+     *
+     * @return array
+     *   Result array.
+     */
+    private function sendToRocketChat($httpVerb = ApiClient::HTTP_GET, $methode = "info", array $options = []) {
+      $result = new \stdClass();
+      try {
+        switch ($httpVerb) {
+          case ApiClient::HTTP_GET:
+            $result = $this->client->get($methode, $options);
+            break;
+
+          case ApiClient::HTTP_POST:
+            $result = $this->client->post($methode, $options);
+            break;
+
+          default:
+            throw new ClientException("HTTP Verb is unsupported", NULL, NULL, NULL, NULL);
+        }
+        $resultString = (string) $result->getBody();
+        $resultHeader = $result->getHeaders();
+        // HTTP Headers
+        $resultCode = $result->getStatusCode();
+        // HTTP Response Code (like 200)
+        $resultStatus = $result->getReasonPhrase();
+        // HTTP Response String (like OK)
+      }
+      catch (ClientException $e) {
+        $resultStatus = $e->getMessage();
+        $resultCode = $e->getCode();
+        $resultString = [];
+        $resultString['status'] = 'failed';
+        $resultString['response'] = $e->getResponse();
+
+        $resultHeader['content-type'][0] = "Error";
+      }
+      if (isset($resultHeader['content-type']) &&
+          !isset($resultHeader['Content-Type'])) {
+        // Quick fix to prevent errors due to capitalization of content-type in the header.
+        $resultHeader['Content-Type'] = $resultHeader['content-type'];
+      }
+
+      if ($resultHeader['Content-Type'][0] == 'application/json') {
+        $jsonDecoder = $this->config->getJsonDecoder();
+        $resultString = $jsonDecoder($resultString);
+      }
+
+      $returnValue = [];
+      $returnValue['result'] = $result;
+      $returnValue['body'] = $resultString;
+      $returnValue['status'] = $resultStatus;
+      $returnValue['code'] = $resultCode;
+
+      return $returnValue;
+    }
+
+    /**
+     * Validate the Return of Rocketchat.
+     *
+     * @param array $result
+     *   Result to check.
+     *
+     * @return bool
+     *   Validation result.
+     *
+     * @deprecated currently not effective code.
+     */
+    public static function validateReturn($result) {
+      // TODO implement a validation for a guzzle return. currently defunct.
+      //
+      //      $result;
+      //      if(is_object($result) &&
+      //         $result instanceof \GuzzleHttp\Psr7\Response) {
+      //        //Guzzle Response
+      //      }
+      // TODO Implement Return Validation Checks!
+      return TRUE;
+    }
+
+    /**
+     * @param $config \RocketChat\Config
+     *   config store that holds the config that is retrieveable using a key-value
+     *   architecture. and has possble defaults.
+     * @param string $methode
+     *   The methode to call (so the part after '/api/v1/').
+     * @param array $Options
      *   Optional Data payload. for HTTP_POST calls.
      *
      * @return array
