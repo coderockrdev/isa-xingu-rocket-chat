@@ -100,7 +100,7 @@ class ApiTestForm extends FormBase {
       '#type' => 'item',
       '#title' => $this->t('API Docs'),
       '#markup' => "See the <a href=\"https://rocket.chat/docs/developer-guides/rest-api\">Rocket chat docs on the rest-api</a> for" .
-        " what methode's there are and what input it needs.",
+      " what methode's there are and what input it needs.",
     ];
 
     $form['verb'] = [

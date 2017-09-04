@@ -60,6 +60,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The ModuleHandler to interact with loaded modules.
    * @param \Drupal\Core\State\StateInterface $state
+   *   The Stateinterface to manipulate the state.
    */
   public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state) {
     parent::__construct($config_factory);
@@ -71,8 +72,8 @@ class RocketChatSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    /** @var ContainerInterface $container */
-    if(!empty($container)) {
+    /** @var \Symfony\Component\DependencyInjection\ContainerInterface $container */
+    if (!empty($container)) {
       return new static(
         $container->get("config.factory"),
         $container->get("module_handler"),
@@ -80,7 +81,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       );
     }
     else {
-      //something huge went wrong, we are missing the ContainerInterface.
+      // Something huge went wrong, we are missing the ContainerInterface.
       throw new ServiceNotFoundException('ContainerInterface');
     }
   }
@@ -210,13 +211,13 @@ class RocketChatSettingsForm extends ConfigFormBase {
       );
     }
 
-    if(!empty($form_user) || !empty($form_secret)) {
-      //Logging in with new credentials.
-      $this->state->deleteMultiple(['rocket_chat_uid','rocket_chat_uit']);
-      $apiConfig = new Drupal8Config($this->configFactory(),$this->moduleHandler,$this->state);
-      $Api = new ApiClient($apiConfig);
-      if($Api->login($config->get('user'),$config->get('secret'))) {
-        $user = $Api->whoami();
+    if (!empty($form_user) || !empty($form_secret)) {
+      // Logging in with new credentials.
+      $this->state->deleteMultiple(['rocket_chat_uid', 'rocket_chat_uit']);
+      $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state);
+      $apiClient = new ApiClient($apiConfig);
+      if ($apiClient->login($config->get('user'), $config->get('secret'))) {
+        $user = $apiClient->whoami();
         $user['body']['username'];
         drupal_set_message(
           $this->t('Rocketchat User [@user]', ['@user' => $user['body']['username']])

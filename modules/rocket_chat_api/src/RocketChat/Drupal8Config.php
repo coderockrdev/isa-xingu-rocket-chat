@@ -14,7 +14,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\State\StateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\rocket_chat_api\RocketChat\Config as RocketChatConfig;
+use Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface as RocketChatConfig;
 
 /**
  * Class Drupal8Config connects the API with the drupal system.
@@ -107,7 +107,7 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
 
   /**
    * @param string $elementName
-   *   Key value to set in the Config Backend.
+   *   Key value to set in the RocketChatConfigInterface Backend.
    * @param string $newValue
    *   the new Value to store.
    *
@@ -161,7 +161,7 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
    *   Type or Level of the Message.
    *
    * @return mixed
-   *   retult of notify on backend.
+   *   Result of notify on backend.
    */
   public function notify($message, $type) {
     return drupal_set_message($message, $type);

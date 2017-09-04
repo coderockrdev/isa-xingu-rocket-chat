@@ -9,15 +9,18 @@
 namespace Drupal\rocket_chat_api\RocketChat {
 
   /**
-   * Interface Config
-   *  interface to make an Arbitrary storeage bbackend for the config elements.
+   * Interface RocketChatConfigInterface
+   *  interface to make an Arbitrary storage backend for the config elements.
    * @package RocketChat
    */
-  interface Config {
+  interface RocketChatConfigInterface {
+
     /**
-     * @param String $elementName
-     *  Key value to retrieve from the Config Backend.
-     * @param String $Default
+     * Get a RocketChatConfigInterface Element.
+     *
+     * @param string $elementName
+     *  Key value to retrieve from the RocketChatConfigInterface Backend.
+     * @param string $Default
      *  A possible Default to use when no config is found in the backend.
      *
      * @return mixed
@@ -26,12 +29,15 @@ namespace Drupal\rocket_chat_api\RocketChat {
     public function getElement($elementName, $Default = NULL);
 
     /**
-     * @param String $elementName
-     *  Key value to set in the Config Backend.
-     * @param String $newValue
-     *  the new Value to store.
+     * Set an Element in the RocketChatConfigInterface.
+     *
+     * @param string $elementName
+     *   Key value to set in the RocketChatConfigInterface Backend.
+     * @param string $newValue
+     *   the new Value to store.
      *
      * @return void
+     *   The Emptyness of the Digital void is unimaginable.
      */
     public function setElement($elementName, $newValue);
 
@@ -39,22 +45,28 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * is this a Debug / verbose Run.
      *
      * @return boolean
+     *   Are we in debug mode?
      */
     public function isDebug();
 
     /**
      * Get a function pointer to the function to use for JsonDecodeing.
+     *
      * @return mixed
+     *   Result array
      */
     public function getJsonDecoder();
 
     /**
-     * @param String $message
+     * Notify the backend.
+     *
+     * @param string $message
      *   Message to report back.
-     * @param String $type
-     *   Type or Level of the Message
+     * @param string $type
+     *   Type or Level of the Message.
      *
      * @return mixed
+     *   Result of notify on backend.
      */
     public function notify($message, $type);
 

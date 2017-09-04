@@ -39,7 +39,7 @@ namespace RocketChat {
 
     /**
      * @param String $ElementName
-     *  Key value to set in the Config Backend.
+     *  Key value to set in the RocketChatConfigInterface Backend.
      * @param String $newValue
      *  the new Value to store.
      *
