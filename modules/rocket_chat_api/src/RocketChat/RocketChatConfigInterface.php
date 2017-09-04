@@ -1,16 +1,15 @@
 <?php
 
 namespace Drupal\rocket_chat_api\RocketChat {
-
   /**
    * Created by 040lab b.v. using PhpStorm from Jetbrains.
-   * User: Lawri van Buël.
-   * Date: 20/06/17.
-   * Time: 16:33.
+   * User: Lawri van Buël
+   * Date: 20/06/17
+   * Time: 16:33
    */
 
   /**
-   * RocketChatConfigInterface to store the RocketChat config elements.
+   * Interface RocketChatConfigInterface to store the RocketChat config elements.
    *
    * @package RocketChat
    */

@@ -2,20 +2,19 @@
 
 namespace Drupal\rocket_chat_api\RocketChat;
 
+/**
+ * Created by 040lab b.v. using PhpStorm from Jetbrains.
+ * User: Lawri van Buël
+ * Date: 20/06/17
+ * Time: 16:38
+ */
+
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\State\StateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface as RocketChatConfig;
-
-/**
- * Created by 040lab b.v. using PhpStorm from Jetbrains.
- * User: Lawri van Buël.
- * Date: 20/06/17.
- * Time: 16:38.
- */
-
 
 /**
  * Class Drupal8Config connects the API with the drupal system.
