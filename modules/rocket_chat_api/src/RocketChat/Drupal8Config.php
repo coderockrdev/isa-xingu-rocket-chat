@@ -75,15 +75,7 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
   }
 
   /**
-   * Retrieves the Storage from a Drupal 7 Variables container.
-   *
-   * @param string $elementName
-   *   Name of the Variable to get.
-   * @param string $default
-   *   A Optional default for when none is found.
-   *
-   * @return mixed
-   *   The value stored or the default or NUll.
+   * {@inheritdoc}
    */
   public function getElement($elementName, $default = NULL) {
     switch ($elementName) {
@@ -92,7 +84,7 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
         $elementName = "server";
       default:
         $value = $this->config->get($elementName);
-        if(empty($value)) {
+        if (empty($value)) {
           $value = $default;
         }
         return $value;
@@ -106,13 +98,7 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
   }
 
   /**
-   * @param string $elementName
-   *   Key value to set in the RocketChatConfigInterface Backend.
-   * @param string $newValue
-   *   the new Value to store.
-   *
-   * @return void
-   *   The Emptyness of the Digital void is unimaginable.
+   * {@inheritdoc}
    */
   public function setElement($elementName, $newValue) {
     $config = $this->config;
@@ -123,45 +109,33 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
       default:
         $config->clear($elementName)->set($elementName, $newValue)->save();
         break;
+
       case 'rocket_chat_uid':
         // Fallthrough.
       case 'rocket_chat_uit':
         // Fallthrough.
         $this->state->set($elementName, $newValue);
         break;
+
     }
-    return;
   }
 
   /**
-   * is this a Debug / verbose Run.
-   *
-   * @return boolean
-   *   Are we in debug mode?
+   * {@inheritdoc}
    */
   public function isDebug() {
     return $this->moduleHandler->moduleExists('devel');
   }
 
   /**
-   * Get a function pointer to the function to use for JsonDecodeing.
-   *
-   * @return mixed
+   * {@inheritdoc}
    */
   public function getJsonDecoder() {
     return '\Drupal\Component\Serialization\Json::decode';
   }
 
   /**
-   * Notify the backend.
-   *
-   * @param string $message
-   *   Message to report back.
-   * @param string $type
-   *   Type or Level of the Message.
-   *
-   * @return mixed
-   *   Result of notify on backend.
+   * {@inheritdoc}
    */
   public function notify($message, $type) {
     return drupal_set_message($message, $type);

@@ -50,7 +50,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     private $client;
 
     /**
-     * @var Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface 
+     * @var Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface
      *   RocketChatConfigInterface object.
      */
     private $config;
