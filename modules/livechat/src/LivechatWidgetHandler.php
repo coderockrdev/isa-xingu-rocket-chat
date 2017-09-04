@@ -34,7 +34,7 @@ namespace Drupal\livechat;
 
 /**
  * Glue class to make the widget dynamically build the javascript file.
- * 
+ *
  * @Class LivechatWidgetHandler.
  *
  *

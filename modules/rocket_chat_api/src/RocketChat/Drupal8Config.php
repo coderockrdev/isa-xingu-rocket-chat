@@ -1,12 +1,13 @@
 <?php
+
+namespace Drupal\rocket_chat_api\RocketChat;
+
 /**
  * Created by 040lab b.v. using PhpStorm from Jetbrains.
  * User: Lawri van Buël
  * Date: 20/06/17
  * Time: 16:38
  */
-
-namespace Drupal\rocket_chat_api\RocketChat;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -45,6 +46,8 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
    *   The factory for configuration objects.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The ModuleHandler to interact with loaded modules.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state interface to manipulate the States.
    */
   public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state) {
     $this->config = $config_factory->get('rocket_chat.settings');
@@ -72,67 +75,71 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
   }
 
   /**
-   * Retrieves the Storage from a Drupal 7 Variables container
-   * @param String $ElementName
+   * Retrieves the Storage from a Drupal 7 Variables container.
+   *
+   * @param string $elementName
    *   Name of the Variable to get.
-   * @param String $Default
+   * @param string $Default
    *   A Optional default for when none is found.
    *
    * @return mixed
    *   The value stored or the default or NUll.
    */
-  function getElement($ElementName, $Default = NULL) {
-    //    $rUID = $this->state->get('rocket_chat_uid',NULL);
-    //    $rUIT = $this->state->get('rocket_chat_uit',NULL);
-    switch ($ElementName) {
-      case 'rocket_chat_url': //fallthrough and modify
-        $ElementName = "server";
+  public function getElement($elementName, $Default = NULL) {
+    switch ($elementName) {
+      case 'rocket_chat_url':
+        // Fallthrough and modify.
+        $elementName = "server";
       default:
-        $value = $this->config->get($ElementName);
+        $value = $this->config->get($elementName);
         if(empty($value)) {
           $value = $Default;
         }
         return $value;
-      case 'rocket_chat_uid': //fallthrough
-      case 'rocket_chat_uit': //fallthrough
-        return $this->state->get($ElementName,$Default);
+      case 'rocket_chat_uid':
+        // Fallthrough.
+      case 'rocket_chat_uit':
+        // Fallthrough.
+        return $this->state->get($elementName, $Default);
 
     }
   }
 
   /**
-   * @param String $ElementName
-   *  Key value to set in the Config Backend.
-   * @param String $newValue
-   *  the new Value to store.
+   * @param string $elementName
+   *   Key value to set in the Config Backend.
+   * @param string $newValue
+   *   the new Value to store.
    *
    * @return void
+   *   The Emptyness of the Digital void is unimaginable.
    */
-  function setElement($ElementName, $newValue) {
-    $config = $this->config;//('rocket_chat.settings');
-    switch ($ElementName) {
-      case 'rocket_chat_url': //fallthrough and modify
-        $ElementName = "url";
+  public function setElement($elementName, $newValue) {
+    $config = $this->config;
+    switch ($elementName) {
+      case 'rocket_chat_url':
+        // Fallthrough and modify.
+        $elementName = "url";
       default:
-        $config->clear($ElementName)->set($ElementName,$newValue)->save();
+        $config->clear($elementName)->set($elementName, $newValue)->save();
         break;
-      case 'rocket_chat_uid': //fallthrough
-      case 'rocket_chat_uit': //fallthrough
-        $this->state->set($ElementName,$newValue);
+      case 'rocket_chat_uid':
+        // Fallthrough.
+      case 'rocket_chat_uit':
+        // Fallthrough.
+        $this->state->set($elementName, $newValue);
         break;
     }
     return;
-
-
-    //    return variable_set($ElementName,$newValue);
   }
 
   /**
    * is this a Debug / verbose Run.
    *
    * @return boolean
+   *   Are we in debug mode?
    */
-  function isDebug() {
+  public function isDebug() {
     return $this->moduleHandler->moduleExists('devel');
   }
 
@@ -141,20 +148,23 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
    *
    * @return mixed
    */
-  function getJsonDecoder() {
-    //    return 'JSON::decode';//'drupal_json_decode';
+  public function getJsonDecoder() {
     return '\Drupal\Component\Serialization\Json::decode';
   }
 
   /**
-   * @param String $message
+   * Notify the backend.
+   *
+   * @param string $message
    *   Message to report back.
-   * @param String $type
-   *   Type or Level of the Message
+   * @param string $type
+   *   Type or Level of the Message.
    *
    * @return mixed
+   *   retult of notify on backend.
    */
-  function notify($message, $type) {
-    return drupal_set_message($message,$type);
+  public function notify($message, $type) {
+    return drupal_set_message($message, $type);
   }
+
 }

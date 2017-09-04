@@ -15,7 +15,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
    */
   interface Config {
     /**
-     * @param String $ElementName
+     * @param String $elementName
      *  Key value to retrieve from the Config Backend.
      * @param String $Default
      *  A possible Default to use when no config is found in the backend.
@@ -23,30 +23,30 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @return mixed
      *  The retrieved config value.
      */
-    function getElement($ElementName, $Default = NULL);
+    public function getElement($elementName, $Default = NULL);
 
     /**
-     * @param String $ElementName
+     * @param String $elementName
      *  Key value to set in the Config Backend.
      * @param String $newValue
      *  the new Value to store.
      *
      * @return void
      */
-    function setElement($ElementName, $newValue);
+    public function setElement($elementName, $newValue);
 
     /**
      * is this a Debug / verbose Run.
      *
      * @return boolean
      */
-    function isDebug();
+    public function isDebug();
 
     /**
      * Get a function pointer to the function to use for JsonDecodeing.
      * @return mixed
      */
-    function getJsonDecoder();
+    public function getJsonDecoder();
 
     /**
      * @param String $message
@@ -56,7 +56,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *
      * @return mixed
      */
-    function notify($message, $type);
+    public function notify($message, $type);
 
   }
 }
