@@ -20,13 +20,13 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *
      * @param string $elementName
      *  Key value to retrieve from the RocketChatConfigInterface Backend.
-     * @param string $Default
+     * @param string $default
      *  A possible Default to use when no config is found in the backend.
      *
      * @return mixed
      *  The retrieved config value.
      */
-    public function getElement($elementName, $Default = NULL);
+    public function getElement($elementName, $default = NULL);
 
     /**
      * Set an Element in the RocketChatConfigInterface.
@@ -35,16 +35,13 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *   Key value to set in the RocketChatConfigInterface Backend.
      * @param string $newValue
      *   the new Value to store.
-     *
-     * @return void
-     *   The Emptyness of the Digital void is unimaginable.
      */
     public function setElement($elementName, $newValue);
 
     /**
      * is this a Debug / verbose Run.
      *
-     * @return boolean
+     * @return bool
      *   Are we in debug mode?
      */
     public function isDebug();

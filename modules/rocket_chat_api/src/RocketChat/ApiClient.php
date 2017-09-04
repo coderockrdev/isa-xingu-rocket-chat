@@ -3,32 +3,15 @@
 namespace Drupal\rocket_chat_api\RocketChat {
 
   /**
-   * This name space will hold all of our Rocket Chat specific code.
+   * This namespace will hold all of our Rocket Chat specific code.
    * Namespaces are a great way to make sure we do not have collisions of our
    * code with some other part of the system.
-   */
-
-  /*
+   *
    * Created by 040lab b.v. using PhpStorm from Jetbrains.
    * User: Lawri van Buël
    * Date: 07/03/17
    * Time: 11:22
-   */
-
-  /**
-   * This name space will hold all of our Rocket Chat specific code.
-   * Namespaces are a great way to make sure we do not have collisions of our
-   * code with some other part of the system.
-   */
-
-  /*
-   * Created by 040lab b.v. using PhpStorm from Jetbrains.
-   * User: Lawri van Buël
-   * Date: 07/03/17
-   * Time: 11:22
-   */
-
-  /**
+   *
    * We utilize Guzzle for the heavy lifting of the HTTP calls themselves due
    * to
    * speed of operations and easy of use. We could also have used plain cUrl
@@ -63,7 +46,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     private $client;
 
     /**
-     * @var Drupal\rocket_chat_api\RocketChat Object
+     * @var \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface Object
      *   RocketChatConfigInterface object.
      */
     private $config;
@@ -77,9 +60,10 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *
      * @param bool $login
      *  When true the stored login tokens will not be used. when false the
-     *   stored login tokens will be useed. This is to facilitate logins and
+     *   stored login tokens will be used. This is to facilitate login and
      *   non-auth calls. Or in other words, is this a login call.
-     * @param $config Drupal\rocket_chat_api\RocketChat\Config
+     * @param \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface $config
+     *   Config Object.
      */
     public function __construct($config = NULL, $login = FALSE) {
       $this->config = $config;
@@ -136,177 +120,84 @@ namespace Drupal\rocket_chat_api\RocketChat {
      */
     public function login($id = NULL, $token = NULL) {
       $rocket = $this->config->getElement('rocket_chat_url', "http://localhost:3000");
-      $oldCLient = $this->client;
+      $oldClient = $this->client;
       $this->client = $this->createClient(TRUE);
       $params = ['username' => $id, 'password' => $token];
       $result = $this->postToRocketChat('login', ['json' => $params]);
-      //      $test = self::validateReturn($result);
+//      $test = self::validateReturn($result);
       $resultString = $result['body'];
 
       if (!($resultString['status'] == 'success')) {
         $this->config->notify("Login to $rocket was Unsuccessful.", 'error');
         unset($this->client);
-        $this->client = $oldCLient;
+        $this->client = $oldClient;
         return FALSE;
       }
       else {
-        unset($oldCLient);
+        unset($oldClient);
         $this->config->setElement("rocket_chat_uid", $resultString['data']['userId']);
         unset($resultString['data']['userId']);
         $this->config->setElement("rocket_chat_uit", $resultString['data']['authToken']);
         unset($resultString['data']['authToken']);
-        $this->config->notify("Login to $rocket was Succesfull.", 'status');
+        $this->config->notify("Login to $rocket was Successful.", 'status');
         $this->client = $this->createClient(FALSE);
         return TRUE;
       }
     }
 
     /**
-     * Post to rocketchat.
+     * Send message to Rocket Chat.
      *
-     * @param string $methode
-     *   The methode to call (so the part after '/api/v1/').
-     * @param array $Options
-     *   Optional Data payload. for HTTP_POST calls.
-     *
-     * @return array
-     *   Result array.
-     */
-    public function postToRocketChat($methode = "info", $Options = NULL) {
-      return $this->sendToRocketChat(ApiClient::HTTP_POST, $methode, $Options);
-    }
-
-    /**
-     * Simple low level helper to GET or POST to the rocketchat.
-     *
-     * @param ApiClient::HTTP_GET | ApiClient::HTTP_POST $Verb
-     *   one of the HTTP_* Verbs to use for this call.
-     * @param string $methode
-     *   The methode to call (so the part after '/api/v1/').
-     * @param array $Options
-     *   Optional Data payload. for HTTP_POST calls.
-     *
-     * @return array
-     *   Result array.
-     */
-    private function sendToRocketChat($Verb = ApiClient::HTTP_GET, $methode = "info", $Options = []) {
-      $result = new \stdClass();
-      try {
-        switch ($Verb) {
-          case ApiClient::HTTP_GET:
-            $result = $this->client->get($methode, $Options);
-            break;
-          case ApiClient::HTTP_POST:
-            $result = $this->client->post($methode, $Options);
-            break;
-          default:
-            throw new ClientException("HTTP Verb is unsupported", NULL, NULL, NULL, NULL);
-        }
-        $resultString = (string) $result->getBody();
-        $resultHeader = $result->getHeaders();     //HTTP Headers
-        $resultCode = $result->getStatusCode();    //HTTP Response Code (like 200)
-        $resultStatus = $result->getReasonPhrase();//HTTP Response String (like OK)
-      } catch (ClientException $e) {
-        $resultStatus = $e->getMessage();
-        $resultCode = $e->getCode();
-        $resultString = [];
-        $resultString['status'] = 'failed';
-        $resultString['response'] = $e->getResponse();
-
-        $resultHeader['content-type'][0] = "Error";
-      }
-      if (isset($resultHeader['content-type']) && !isset($resultHeader['Content-Type'])) {
-        //Quick fix to prevent errors due to capitalization of content-type in the header.
-        $resultHeader['Content-Type'] = $resultHeader['content-type'];
-      }
-
-
-      if ($resultHeader['Content-Type'][0] == 'application/json') {
-        $jsonDecoder = $this->config->getJsonDecoder();
-        $resultString = $jsonDecoder($resultString);
-      }
-
-      $Ret = [];
-      $Ret['result'] = $result;
-      $Ret['body'] = $resultString;
-      $Ret['status'] = $resultStatus;
-      $Ret['code'] = $resultCode;
-
-      return $Ret;
-    }
-
-    /**
-     * validate the Return of Rocketchat.
-     *
-     * @deprecated currently not effective code.
-     *
-     * @param $result
-     *   Result to check
-     *
-     * @return bool
-     *   Validation result.
-     */
-    public static function validateReturn($result) {
-      //      //TODO implement a validation for a guzzle return. currently this code is defunct.
-      //
-      //      $result;
-      //      if(is_object($result) && $result instanceof \GuzzleHttp\Psr7\Response) {
-      //        //Guzzle Response
-      //      }
-      return TRUE; //TODO Implement Return Validation Checks!
-    }
-
-    /**
-     * @param $config \RocketChat\Config
-     *   config store that holds the config that is retrieveable using a key-value
-     *   architecture. and has possble defaults.
-     * @param string $methode
-     *   The methode to call (so the part after '/api/v1/').
-     * @param array $Options
-     *   Optional Data payload. for HTTP_POST calls.
-     *
-     * @return array
-     *   Result array.
-     */
-    public function postToRocketChat($methode = "info", array $options = NULL) {
-      return $this->sendToRocketChat(ApiClient::HTTP_POST, $methode, $options);
-    }
-
-    /**
-     * Simple low level helper to GET or POST to the rocketchat.
-     *
-     * @param ApiClient::HTTP_GET|ApiClient::HTTP_POST $httpVerb
-     *   one of the HTTP_* Verbs to use for this call.
-     * @param string $methode
-     *   The methode to call (so the part after '/api/v1/').
+     * @param string $method
+     *   The method to call (so the part after '/api/v1/').
      * @param array $options
      *   Optional Data payload. for HTTP_POST calls.
      *
      * @return array
      *   Result array.
      */
-    private function sendToRocketChat($httpVerb = ApiClient::HTTP_GET, $methode = "info", array $options = []) {
+    public function postToRocketChat($method = "info", array $options = NULL) {
+      return $this->sendToRocketChat(ApiClient::HTTP_POST, $method, $options);
+    }
+
+    /**
+     * Simple low level helper to GET or POST to the rocketchat.
+     *
+     * @param string $httpVerb
+     *   one of the HTTP_* Verbs to use for this call.
+     * @param string $method
+     *   The method to call (so the part after '/api/v1/').
+     * @param array $options
+     *   Optional Data payload. for HTTP_POST calls.
+     *
+     * @return array
+     *   Result array.
+     */
+    private function sendToRocketChat($httpVerb = ApiClient::HTTP_GET, $method = "info", array $options = []) {
       $result = new \stdClass();
       try {
         switch ($httpVerb) {
           case ApiClient::HTTP_GET:
-            $result = $this->client->get($methode, $options);
+            $result = $this->client->get($method, $options);
             break;
 
           case ApiClient::HTTP_POST:
-            $result = $this->client->post($methode, $options);
+            $result = $this->client->post($method, $options);
             break;
 
           default:
             throw new ClientException("HTTP Verb is unsupported", NULL, NULL, NULL, NULL);
         }
         $resultString = (string) $result->getBody();
-        $resultHeader = $result->getHeaders();
+
         // HTTP Headers
-        $resultCode = $result->getStatusCode();
+        $resultHeader = $result->getHeaders();
+
         // HTTP Response Code (like 200)
-        $resultStatus = $result->getReasonPhrase();
+        $resultCode = $result->getStatusCode();
+
         // HTTP Response String (like OK)
+        $resultStatus = $result->getReasonPhrase();
       }
       catch (ClientException $e) {
         $resultStatus = $e->getMessage();
@@ -349,14 +240,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @deprecated currently not effective code.
      */
     public static function validateReturn($result) {
-      // TODO implement a validation for a guzzle return. currently defunct.
-      //
-      //      $result;
-      //      if(is_object($result) &&
-      //         $result instanceof \GuzzleHttp\Psr7\Response) {
-      //        //Guzzle Response
-      //      }
-      // TODO Implement Return Validation Checks!
+//       TODO implement a validation for a guzzle return. currently defunct.
+//
+//            $result;
+//            if(is_object($result) &&
+//               $result instanceof \GuzzleHttp\Psr7\Response) {
+//              //Guzzle Response
+//            }
+//       TODO Implement Return Validation Checks!
       return TRUE;
     }
 
@@ -366,7 +257,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @return array
      *   Result array.
      */
-    public function whoami() {
+    public function whoAmI() {
       return $this->getFromRocketChat('me');
     }
 
@@ -407,39 +298,39 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *   Result of Call.
      */
     public function sudo($otherUserId, $functionName, ...$args) {
-      //TODO Refactor this to use a special local config for use during sudo call. Disabled until such a time to limit its Security implication!
+//      TODO Refactor this to use a special local config for use during sudo call. Disabled until such a time to limit its Security implication!
       throw new \BadFunctionCallException("SUDO is Disabled until a security fix is implemented!", 255);
-      //
-      //    // NOTE $args === func_get_args();
-      //    if($functionName == 'login' || $functionName == 'logout') {
-      //      throw new \BadFunctionCallException("$functionName must be used directly not through sudo.",502);
-      //    }
-      //    $retVal = NULL;
-      //    $originalConfig = $this->config;
-      //    $newConfig = clone $this->config;
-      //    try {
-      //      $authToken = $this->postToRocketChat('users.createToken',['json' => ['userId' => $otherUserId]]);
-      //
-      //      //check     $authToken = $this->postToRocketChat('users.createToken',['json' => ['userId' => $otherUserId]]) yield sresult;
-      //
-      //      $newConfig->setElement('rocket_chat_uid', $authToken['body']['data']['userId']);
-      //      $newConfig->setElement('rocket_chat_uit',$authToken['body']['data']['authToken']);
-      //
-      //      $this->config = $newConfig;
-      //      $this->client = $this->createClient(false);
-      //
-      //      //DO Function call
-      //      $retVal = $this->$functionName(...$args );
-      //    } catch (\Exception $e) { //TODO IMPLEMENT!!!
-      //
-      //    } finally {
-      //      $this->config = $originalConfig;
-      //      $this->client = $this->createClient(false);
-      //    }
-      //    return $retVal;
-      //    //Do Call
-      //    //TODO Implement me
-      //      return;
+//
+//          // NOTE $args === func_get_args();
+//          if($functionName == 'login' || $functionName == 'logout') {
+//            throw new \BadFunctionCallException("$functionName must be used directly not through sudo.",502);
+//          }
+//          $retVal = NULL;
+//          $originalConfig = $this->config;
+//          $newConfig = clone $this->config;
+//          try {
+//            $authToken = $this->postToRocketChat('users.createToken',['json' => ['userId' => $otherUserId]]);
+//
+//            //check     $authToken = $this->postToRocketChat('users.createToken',['json' => ['userId' => $otherUserId]]) yields result;
+//
+//            $newConfig->setElement('rocket_chat_uid', $authToken['body']['data']['userId']);
+//            $newConfig->setElement('rocket_chat_uit',$authToken['body']['data']['authToken']);
+//
+//            $this->config = $newConfig;
+//            $this->client = $this->createClient(false);
+//
+//            //DO Function call
+//            $retVal = $this->$functionName(...$args );
+//          } catch (\Exception $e) { //TODO IMPLEMENT!!!
+//
+//          } finally {
+//            $this->config = $originalConfig;
+//            $this->client = $this->createClient(false);
+//          }
+//          return $retVal;
+//          //Do Call
+//          //TODO Implement me
+//            return;
     }
 
     /**
@@ -550,7 +441,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @param bool $unreads
      *   Include the amount of unreads.
      * @param bool $inclusive
-     *   Are the limits inclusive or explusive.
+     *   Are the limits inclusive or exclusive.
      * @param int $count
      *   How many to retrieve max.
      * @param string $latest
@@ -626,7 +517,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
         $params['avatar'] = $avatar;
       }
       if (!empty($attachments)) {
-        $params['attachements'] = $attachments;
+        $params['attachments'] = $attachments;
       }
       return $this->postToRocketChat('chat.postMessage', ['json' => $params]);
     }

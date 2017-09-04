@@ -33,7 +33,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\livechat\LivechatWidgetHandler;
 
 /**
- * Class Rocket extands ControllerBase.
+ * Class Rocket extends ControllerBase.
  *
  * @package Drupal\rocket_chat\Controller
  */

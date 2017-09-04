@@ -34,6 +34,14 @@ use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Implements hook_help().
+ *
+ * @param $route_name
+ *    Route name.
+ * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+ *    RouteMatch Interface.
+ *
+ * @return string
+ *    Help string.
  */
 function rocket_chat_help($route_name, RouteMatchInterface $route_match) {
   if ($route_name === 'rocket_chat.admin_settings') {

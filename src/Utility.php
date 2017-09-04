@@ -63,11 +63,9 @@ class Utility {
    *
    * @param string $url
    *   Url to parse.
-   *
-   * @return array
-   *   Url in its separated Parts.
-   *
-   * @Throws \HttpUrlException
+   * @return array Url in its separated Parts.
+   * Url in its separated Parts.
+   * @throws \HttpUrlException
    *   when scheme is missing.
    */
   public static function parseUrl($url) {

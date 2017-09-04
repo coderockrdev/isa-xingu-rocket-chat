@@ -14,14 +14,13 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\State\StateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface as RocketChatConfig;
 
 /**
  * Class Drupal8Config connects the API with the drupal system.
  *
  * @package RocketChat
  */
-class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
+class Drupal8Config implements RocketChatConfigInterface, ContainerInjectionInterface {
 
   /**
    * The config factory.
@@ -56,15 +55,7 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
   }
 
   /**
-   * Instantiates a new instance of this class.
-   *
-   * This is a factory method that returns a new instance of this class. The
-   * factory should pass any needed dependencies into the constructor of this
-   * class, but not the container itself. Every call to this method must return
-   * a new instance of this class; that is, it may not implement a singleton.
-   *
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   *   The service container this instance should use.
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -75,17 +66,9 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
   }
 
   /**
-   * Retrieves the Storage from a Drupal 7 Variables container.
-   *
-   * @param string $elementName
-   *   Name of the Variable to get.
-   * @param string $Default
-   *   A Optional default for when none is found.
-   *
-   * @return mixed
-   *   The value stored or the default or NUll.
+   * {@inheritdoc}
    */
-  public function getElement($elementName, $Default = NULL) {
+  public function getElement($elementName, $default = NULL) {
     switch ($elementName) {
       case 'rocket_chat_url':
         // Fallthrough and modify.
@@ -93,26 +76,20 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
       default:
         $value = $this->config->get($elementName);
         if(empty($value)) {
-          $value = $Default;
+          $value = $default;
         }
         return $value;
       case 'rocket_chat_uid':
         // Fallthrough.
       case 'rocket_chat_uit':
         // Fallthrough.
-        return $this->state->get($elementName, $Default);
+        return $this->state->get($elementName, $default);
 
     }
   }
 
   /**
-   * @param string $elementName
-   *   Key value to set in the RocketChatConfigInterface Backend.
-   * @param string $newValue
-   *   the new Value to store.
-   *
-   * @return void
-   *   The Emptyness of the Digital void is unimaginable.
+   * {@inheritdoc}
    */
   public function setElement($elementName, $newValue) {
     $config = $this->config;
@@ -134,34 +111,21 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
   }
 
   /**
-   * is this a Debug / verbose Run.
-   *
-   * @return boolean
-   *   Are we in debug mode?
+   * {@inheritdoc}
    */
   public function isDebug() {
     return $this->moduleHandler->moduleExists('devel');
   }
 
   /**
-   * Get a function pointer to the function to use for JsonDecodeing.
-   *
-   * @return mixed
+   * {@inheritdoc}
    */
   public function getJsonDecoder() {
     return '\Drupal\Component\Serialization\Json::decode';
   }
 
   /**
-   * Notify the backend.
-   *
-   * @param string $message
-   *   Message to report back.
-   * @param string $type
-   *   Type or Level of the Message.
-   *
-   * @return mixed
-   *   Result of notify on backend.
+   * {@inheritdoc}
    */
   public function notify($message, $type) {
     return drupal_set_message($message, $type);

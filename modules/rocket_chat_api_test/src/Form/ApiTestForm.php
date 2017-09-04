@@ -100,7 +100,7 @@ class ApiTestForm extends FormBase {
       '#type' => 'item',
       '#title' => $this->t('API Docs'),
       '#markup' => "See the <a href=\"https://rocket.chat/docs/developer-guides/rest-api\">Rocket chat docs on the rest-api</a> for" .
-      " what methode's there are and what input it needs.",
+      " what method's there are and what input it needs.",
     ];
 
     $form['verb'] = [
@@ -113,10 +113,10 @@ class ApiTestForm extends FormBase {
       ],
       '#default_value' => 'GET',
     ];
-    $form['methode'] = [
+    $form['method'] = [
       '#type' => 'textfield',
-      '#description' => $this->t("Rocket chat Methode name like 'me'"),
-      '#title' => $this->t('Methode'),
+      '#description' => $this->t("Rocket chat Method name like 'me'"),
+      '#title' => $this->t('Method'),
       '#required' => TRUE,
     ];
 
@@ -165,7 +165,7 @@ class ApiTestForm extends FormBase {
       case "GET":
         $options = ['query' => Json::decode($form_state->getValue('Options'))];
         $result = $apiClient->getFromRocketChat(
-          $form_state->getValue('methode'),
+          $form_state->getValue('method'),
           $options
         );
         break;
@@ -173,14 +173,14 @@ class ApiTestForm extends FormBase {
       case "POST":
         $options = ['json' => Json::decode($form_state->getValue('Options'))];
         $result = $apiClient->postToRocketChat(
-          $form_state->getValue('methode'),
+          $form_state->getValue('method'),
           $options
         );
         break;
 
       default:
         $result = [
-          "status" => "ILLIGAL ACTION",
+          "status" => "ILLEGAL ACTION",
           "body" => "NULL",
         ];
         break;

@@ -15,7 +15,7 @@ INTRODUCTION
 ------------
 
 The Rocket.chat Module enables a drupal site to integrate Rocket.chat.  
-It consits of several modules:
+It consist of several modules:
 
  - [Rocket chat](rocket_chat): The base module that holds the configuration.
  - [Live chat](livechat): the Live chat module contains a block you can place to
@@ -39,7 +39,7 @@ Recommendations
 We strongly recommend you run your Drupal and your Rocket.chat behind a TLS 
 proxy or webserver with TLS capabilities.  
 When using this module beware of HTTPS<->HTTP crossovers, they often just do not
- work and for this reason we recommand you trun both services under TLS.  
+ work and for this reason we recommend you turn both services under TLS.  
 In order to use the livechat functionality you need to enable livechat on your 
 rocket.chat instance, or you will not see anything.
 
@@ -58,14 +58,14 @@ Installation
   - Setup the rocket_chat module.
   - Go to [Structure][Block layout]. there you can place the livechat block 
     using the "Place block" button.
-    This works as a normal block we recommand you add it to a footer or alike 
+    This works as a normal block we recommend you add it to a footer or alike 
     for performance.   
 - Rocket Chat API Module:
   - This module enables you to utilize the Rocket chat API.
 - API Test:
   - You can use this module to test the various aspects of the API without 
     having to write all the code to do so.  
-    After enableing it its available on the `/apitest` path for rocketchat 
+    After enabling it its available on the `/apitest` path for rocketchat 
     admins.     
 
 Configuration

@@ -36,8 +36,6 @@ use Drupal\rocket_chat_api\RocketChat\ApiClient;
 use Drupal\rocket_chat_api\RocketChat\Drupal8Config;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rocket_chat\Utility;
@@ -52,7 +50,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 class RocketChatSettingsForm extends ConfigFormBase {
 
   private $moduleHandler;
-  private $state;
 
   private $state;
 
@@ -148,7 +145,6 @@ class RocketChatSettingsForm extends ConfigFormBase {
     }
 
     return parent::buildForm($form, $form_state);
-
   }
 
   /**
@@ -221,7 +217,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state);
       $apiClient = new ApiClient($apiConfig);
       if ($apiClient->login($config->get('user'), $config->get('secret'))) {
-        $user = $apiClient->whoami();
+        $user = $apiClient->whoAmI();
         $user['body']['username'];
         drupal_set_message(
           $this->t('Rocketchat User [@user]', ['@user' => $user['body']['username']])

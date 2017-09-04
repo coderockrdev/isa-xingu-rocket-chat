@@ -100,6 +100,7 @@ class LivechatWidgetHandler {
       }
       return $this->widgetParams();
     }
+    return [];
   }
 
   /**
