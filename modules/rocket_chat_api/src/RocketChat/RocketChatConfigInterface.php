@@ -1,16 +1,16 @@
 <?php
+/**
+ * Created by 040lab b.v. using PhpStorm from Jetbrains.
+ * User: Lawri van Buël
+ * Date: 20/06/17
+ * Time: 16:33
+ */
 
 namespace Drupal\rocket_chat_api\RocketChat {
-  /**
-   * Created by 040lab b.v. using PhpStorm from Jetbrains.
-   * User: Lawri van Buël
-   * Date: 20/06/17
-   * Time: 16:33
-   */
 
   /**
-   * Interface RocketChatConfigInterface to store the RocketChat config elements.
-   *
+   * Interface RocketChatConfigInterface
+   *  interface to make an Arbitrary storage backend for the config elements.
    * @package RocketChat
    */
   interface RocketChatConfigInterface {
@@ -19,14 +19,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * Get a RocketChatConfigInterface Element.
      *
      * @param string $elementName
-     *   Key value to retrieve from the RocketChatConfigInterface Backend.
-     * @param string $default
-     *   A possible Default to use when no config is found in the backend.
+     *  Key value to retrieve from the RocketChatConfigInterface Backend.
+     * @param string $Default
+     *  A possible Default to use when no config is found in the backend.
      *
      * @return mixed
-     *   The retrieved config value.
+     *  The retrieved config value.
      */
-    public function getElement($elementName, $default = NULL);
+    public function getElement($elementName, $Default = NULL);
 
     /**
      * Set an Element in the RocketChatConfigInterface.
@@ -35,13 +35,16 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *   Key value to set in the RocketChatConfigInterface Backend.
      * @param string $newValue
      *   the new Value to store.
+     *
+     * @return void
+     *   The Emptyness of the Digital void is unimaginable.
      */
     public function setElement($elementName, $newValue);
 
     /**
-     * Is this a Debug / verbose Run.
+     * is this a Debug / verbose Run.
      *
-     * @return bool
+     * @return boolean
      *   Are we in debug mode?
      */
     public function isDebug();
