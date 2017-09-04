@@ -53,6 +53,25 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
   }
 
   /**
+   * Instantiates a new instance of this class.
+   *
+   * This is a factory method that returns a new instance of this class. The
+   * factory should pass any needed dependencies into the constructor of this
+   * class, but not the container itself. Every call to this method must return
+   * a new instance of this class; that is, it may not implement a singleton.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container this instance should use.
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('module_handler'),
+      $container->get('state')
+    );
+  }
+
+  /**
    * Retrieves the Storage from a Drupal 7 Variables container
    * @param String $ElementName
    *   Name of the Variable to get.
@@ -63,8 +82,8 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
    *   The value stored or the default or NUll.
    */
   function getElement($ElementName, $Default = NULL) {
-//    $rUID = $this->state->get('rocket_chat_uid',NULL);
-//    $rUIT = $this->state->get('rocket_chat_uit',NULL);
+    //    $rUID = $this->state->get('rocket_chat_uid',NULL);
+    //    $rUIT = $this->state->get('rocket_chat_uit',NULL);
     switch ($ElementName) {
       case 'rocket_chat_url': //fallthrough and modify
         $ElementName = "server";
@@ -105,7 +124,7 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
     return;
 
 
-//    return variable_set($ElementName,$newValue);
+    //    return variable_set($ElementName,$newValue);
   }
 
   /**
@@ -118,16 +137,14 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
   }
 
   /**
-   * Get a function pointer to teh function to use for JsonDecodeing.
+   * Get a function pointer to the function to use for JsonDecodeing.
    *
    * @return mixed
    */
   function getJsonDecoder() {
-//    return 'JSON::decode';//'drupal_json_decode';
+    //    return 'JSON::decode';//'drupal_json_decode';
     return '\Drupal\Component\Serialization\Json::decode';
   }
-
-
 
   /**
    * @param String $message
@@ -138,25 +155,6 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
    * @return mixed
    */
   function notify($message, $type) {
-     return drupal_set_message($message,$type);
-  }
-
-  /**
-   * Instantiates a new instance of this class.
-   *
-   * This is a factory method that returns a new instance of this class. The
-   * factory should pass any needed dependencies into the constructor of this
-   * class, but not the container itself. Every call to this method must return
-   * a new instance of this class; that is, it may not implement a singleton.
-   *
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   *   The service container this instance should use.
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('module_handler'),
-      $container->get('state')
-    );
+    return drupal_set_message($message,$type);
   }
 }

@@ -43,7 +43,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     function isDebug();
 
     /**
-     * Get a function pointer to teh function to use for JsonDecodeing.
+     * Get a function pointer to the function to use for JsonDecodeing.
      * @return mixed
      */
     function getJsonDecoder();

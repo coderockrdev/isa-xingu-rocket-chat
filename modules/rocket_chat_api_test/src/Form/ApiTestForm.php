@@ -26,7 +26,8 @@ namespace Drupal\rocket_chat_api_test\Form;
  * @file
  * Contains \Drupal\rocket_chat_api_test\Form\ApiTestForm.
  *
- * This Form allows you to test Rocket chat API calls through the rocket_API Module.
+ * This Form allows you to test Rocket chat API calls through the rocket_API
+ * Module.
  */
 
 use Drupal\Component\Serialization\Json;
@@ -59,6 +60,7 @@ class ApiTestForm extends FormBase {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The ModuleHandler to interact with loaded modules.
    * @param \Drupal\Core\State\StateInterface $state
+   *   The StateInterface to manipulate state information.
    */
   public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state) {
     $this->setConfigFactory($config_factory);
@@ -70,8 +72,7 @@ class ApiTestForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    /** @var ContainerInterface $container */
-    if(!empty($container)) {
+    if (!empty($container)) {
       return new static(
         $container->get("config.factory"),
         $container->get("module_handler"),
@@ -79,7 +80,7 @@ class ApiTestForm extends FormBase {
       );
     }
     else {
-      //something huge went wrong, we are missing the ContainerInterface.
+      // Something huge went wrong, we are missing the ContainerInterface.
       throw new ServiceNotFoundException('ContainerInterface');
     }
   }
@@ -99,7 +100,7 @@ class ApiTestForm extends FormBase {
       '#type' => 'item',
       '#title' => $this->t('API Docs'),
       '#markup' => "See the <a href=\"https://rocket.chat/docs/developer-guides/rest-api\">Rocket chat docs on the rest-api</a> for" .
-                  " what methode's there are and what input it needs."
+        " what methode's there are and what input it needs.",
     ];
 
     $form['verb'] = [
@@ -110,7 +111,7 @@ class ApiTestForm extends FormBase {
         'GET' => $this->t('Get'),
         'POST' => $this->t('Post'),
       ],
-      '#default_value' => 'GET'
+      '#default_value' => 'GET',
     ];
     $form['methode'] = [
       '#type' => 'textfield',
@@ -143,8 +144,8 @@ class ApiTestForm extends FormBase {
     // All required fields are submitted.
     if (!empty($form_state->getValue('Options'))) {
       $jsonOptions = Json::decode($form_state->getValue('Options'));
-      if(!empty($form_state->getValue('Options')) && is_null($jsonOptions)) {
-        //Json is wrong.
+      if (!empty($form_state->getValue('Options')) && is_null($jsonOptions)) {
+        // Json is wrong.
         $form_state->setErrorByName('Options', $this->t('JSON PARSE ERROR,please check your JSON'));
       }
     }
@@ -154,39 +155,42 @@ class ApiTestForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-      $apiConfig = new Drupal8Config(
-        $this->configFactory,
-        $this->moduleHandler,
-        $this->state
-      );
-      $Api = new ApiClient($apiConfig);
-      switch ($form_state->getValue('verb')) {
-        case "GET":
-          $options = ['query' => Json::decode($form_state->getValue('Options'))];
-          $result = $Api->getFromRocketChat(
-            $form_state->getValue('methode'),
-            $options
-          );
-          break;
-        case "POST":
-          $options = ['json' => Json::decode($form_state->getValue('Options'))];
-          $result = $Api->postToRocketChat(
-            $form_state->getValue('methode'),
-            $options
-          );
-          break;
-        default:
-          $result = [
-            "status" => "ILLIGAL ACTION",
-            "body" => "NULL",
-          ];
-          break;
-      }
+    $apiConfig = new Drupal8Config(
+      $this->configFactory,
+      $this->moduleHandler,
+      $this->state
+    );
+    $apiClient = new ApiClient($apiConfig);
+    switch ($form_state->getValue('verb')) {
+      case "GET":
+        $options = ['query' => Json::decode($form_state->getValue('Options'))];
+        $result = $apiClient->getFromRocketChat(
+          $form_state->getValue('methode'),
+          $options
+        );
+        break;
 
-      drupal_set_message(
-        $result['status']. ': '.
-        var_export($result['body'],TRUE)
-      );
+      case "POST":
+        $options = ['json' => Json::decode($form_state->getValue('Options'))];
+        $result = $apiClient->postToRocketChat(
+          $form_state->getValue('methode'),
+          $options
+        );
+        break;
+
+      default:
+        $result = [
+          "status" => "ILLIGAL ACTION",
+          "body" => "NULL",
+        ];
+        break;
+
+    }
+
+    drupal_set_message(
+      $result['status'] . ': ' .
+      var_export($result['body'], TRUE)
+    );
   }
 
 }
