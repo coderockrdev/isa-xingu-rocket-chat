@@ -59,7 +59,14 @@ Installation
   - Go to [Structure][Block layout]. there you can place the livechat block 
     using the "Place block" button.
     This works as a normal block we recommand you add it to a footer or alike 
-    for performance.    
+    for performance.   
+- Rocket Chat API Module:
+  - This module enables you to utilize the Rocket chat API.
+- API Test:
+  - You can use this module to test the various aspects of the API without 
+    having to write all the code to do so.  
+    After enableing it its available on the `/apitest` path for rocketchat 
+    admins.     
 
 Configuration
 -------------

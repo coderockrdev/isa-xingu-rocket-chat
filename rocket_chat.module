@@ -11,7 +11,7 @@
  */
 
 /**
- * Copyright (c) 2016.
+ * Copyright (c) 2017.
  *
  * Authors:
  * - Lawri van Buël <sysosmaster@2588960.no-reply.drupal.org>.
@@ -36,9 +36,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
  * Implements hook_help().
  */
 function rocket_chat_help($route_name, RouteMatchInterface $route_match) {
-  // $rname = $route_match->getRouteName();
   if ($route_name === 'rocket_chat.admin_settings') {
-
     $output = '<div class="admin admin_title title rocketchat">';
     $output .= '<h4>' . t('Rocket.Chat configuration management.') . '</h4>';
     $output .= '<div class="admin rocketchat">';

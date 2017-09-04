@@ -26,7 +26,7 @@
   'use strict';
   // Server params.
   var DEFAULT = {
-    url: 'http://localhost'
+    url: 'http://localhost:3000'
   };
   DEFAULT.toString();
 

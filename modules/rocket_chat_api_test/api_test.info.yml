@@ -1,0 +1,7 @@
+name: Api Test
+type: module
+description: API Test.
+package: Rocket.Chat
+core: 8.x
+dependencies:
+  - drupal:rocket_chat_api

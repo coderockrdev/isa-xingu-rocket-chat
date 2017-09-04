@@ -3,7 +3,7 @@
 namespace Drupal\rocket_chat\Form;
 
 /**
- * Copyright (c) 2016.
+ * Copyright (c) 2017.
  *
  * Authors:
  * - Lawri van Buël <sysosmaster@2588960.no-reply.drupal.org>.
@@ -31,7 +31,11 @@ namespace Drupal\rocket_chat\Form;
  */
 
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\State\StateInterface;
+use Drupal\rocket_chat_api\RocketChat\ApiClient;
+use Drupal\rocket_chat_api\RocketChat\Drupal8Config;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rocket_chat\Utility;
@@ -46,6 +50,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 class RocketChatSettingsForm extends ConfigFormBase {
 
   private $moduleHandler;
+  private $state;
 
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
@@ -54,20 +59,30 @@ class RocketChatSettingsForm extends ConfigFormBase {
    *   The factory for configuration objects.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The ModuleHandler to interact with loaded modules.
+   * @param \Drupal\Core\State\StateInterface $state
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state) {
     parent::__construct($config_factory);
     $this->moduleHandler = $moduleHandler;
+    $this->state = $state;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('module_handler')
-    );
+    /** @var ContainerInterface $container */
+    if(!empty($container)) {
+      return new static(
+        $container->get("config.factory"),
+        $container->get("module_handler"),
+        $container->get("state")
+      );
+    }
+    else {
+      //something huge went wrong, we are missing the ContainerInterface.
+      throw new ServiceNotFoundException('ContainerInterface');
+    }
   }
 
   /**
@@ -95,14 +110,14 @@ class RocketChatSettingsForm extends ConfigFormBase {
     $form['url'] = [
       '#type' => 'url',
       '#title' => $this->t('The Rocket.chat server address:'),
-      '#required' => TRUE,
+      '#required' => FALSE,
       '#attributes' => [
         'placeholder' => "https://demo.rocket.chat/",
       ],
     ];
     // Only set the value if there is a value.
     if (!empty($server)) {
-      $form['url']['#value'] = $server;
+      $form['url']['#defaultvalue'] = $server;
     }
 
     // Only add the following when the rocket_chat_api module is enabled.
@@ -113,7 +128,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
         '#title' => $this->t('Rocketchat Admin User:'),
         '#required' => FALSE,
         '#attributes' => [
-          'placeholder' => 'RocketChat Admin User',
+          'placeholder' => $config->get('user'),
         ],
       ];
       $form['rocketchat_key'] = [
@@ -135,7 +150,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    // All requirerd fields are submitted.
+    // All required fields are submitted.
     if (!empty($form_state->getValue('url'))) {
 
       // Check if host server is running.
@@ -144,11 +159,9 @@ class RocketChatSettingsForm extends ConfigFormBase {
         $form_state->setErrorByName('url', "<div class=\"error rocketchat\">" .
           $this->t('<strong>Server is not working!</strong><br>') .
           $this->t('<em>incorrect address</em>,') . ' ' .
-          $this->t('please check your server and your port.') . '</div>');
+          $this->t('please check your supplied URL') . '</div>');
       }
-
     }
-
   }
 
   /**
@@ -195,6 +208,20 @@ class RocketChatSettingsForm extends ConfigFormBase {
       drupal_set_message(
         $this->t('Updated the Rocketchat Admin Password')
       );
+    }
+
+    if(!empty($form_user) || !empty($form_secret)) {
+      //Logging in with new credentials.
+      $this->state->deleteMultiple(['rocket_chat_uid','rocket_chat_uit']);
+      $apiConfig = new Drupal8Config($this->configFactory(),$this->moduleHandler,$this->state);
+      $Api = new ApiClient($apiConfig);
+      if($Api->login($config->get('user'),$config->get('secret'))) {
+        $user = $Api->whoami();
+        $user['body']['username'];
+        drupal_set_message(
+          $this->t('Rocketchat User [@user]', ['@user' => $user['body']['username']])
+        );
+      }
     }
   }
 
