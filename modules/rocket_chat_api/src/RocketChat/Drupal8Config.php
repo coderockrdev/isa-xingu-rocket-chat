@@ -79,13 +79,13 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
    *
    * @param string $elementName
    *   Name of the Variable to get.
-   * @param string $Default
+   * @param string $default
    *   A Optional default for when none is found.
    *
    * @return mixed
    *   The value stored or the default or NUll.
    */
-  public function getElement($elementName, $Default = NULL) {
+  public function getElement($elementName, $default = NULL) {
     switch ($elementName) {
       case 'rocket_chat_url':
         // Fallthrough and modify.
@@ -93,14 +93,14 @@ class Drupal8Config implements RocketChatConfig, ContainerInjectionInterface {
       default:
         $value = $this->config->get($elementName);
         if(empty($value)) {
-          $value = $Default;
+          $value = $default;
         }
         return $value;
       case 'rocket_chat_uid':
         // Fallthrough.
       case 'rocket_chat_uit':
         // Fallthrough.
-        return $this->state->get($elementName, $Default);
+        return $this->state->get($elementName, $default);
 
     }
   }
