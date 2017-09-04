@@ -58,12 +58,13 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *  Loads in the configuration from the Drupal Variables and preparers the
      *  Client with some defaults and base values for ease of use.
      *
+     * @param \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface $config
+     *   Config Object.
+     *
      * @param bool $login
      *  When true the stored login tokens will not be used. when false the
      *   stored login tokens will be used. This is to facilitate login and
      *   non-auth calls. Or in other words, is this a login call.
-     * @param \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface $config
-     *   Config Object.
      */
     public function __construct($config = NULL, $login = FALSE) {
       $this->config = $config;
@@ -86,11 +87,12 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *   Filter out the login credentials.
      *
      * @return \GuzzleHttp\Client
+     *    New HTTP Client.
      */
     private function createClient($login = FALSE) {
       $userId = $this->config->getElement("rocket_chat_uid");
       $userToken = $this->config->getElement("rocket_chat_uit");
-      $GuzzleConfig = [
+      $guzzleConfig = [
         'base_uri' => $this->config->getElement('rocket_chat_url', "http://localhost:3000") . '/api/v1/',
         'allow_redirects' => FALSE,
         'timeout' => 60,
@@ -101,22 +103,22 @@ namespace Drupal\rocket_chat_api\RocketChat {
         ],
       ];
       if ($login) {
-        unset($GuzzleConfig['headers']);
+        unset($guzzleConfig['headers']);
       }
-      $GuzzleConfig['headers']['Content-Type'] = 'application/json';
-      return new Client($GuzzleConfig);
+      $guzzleConfig['headers']['Content-Type'] = 'application/json';
+      return new Client($guzzleConfig);
     }
 
     /**
      * Do a Login on the Rocket Chat REST API.
      *
      * @param $id
-     *   the Username.
+     *   The Username.
      * @param $token
      *   The Authentication token. aka password.
      *
      * @return bool
-     *  Was the login successful or not.
+     *   Was the login successful or not.
      */
     public function login($id = NULL, $token = NULL) {
       $rocket = $this->config->getElement('rocket_chat_url', "http://localhost:3000");
@@ -190,13 +192,13 @@ namespace Drupal\rocket_chat_api\RocketChat {
         }
         $resultString = (string) $result->getBody();
 
-        // HTTP Headers
+        // HTTP Headers.
         $resultHeader = $result->getHeaders();
 
-        // HTTP Response Code (like 200)
+        // HTTP Response Code (like 200).
         $resultCode = $result->getStatusCode();
 
-        // HTTP Response String (like OK)
+        // HTTP Response String (like OK).
         $resultStatus = $result->getReasonPhrase();
       }
       catch (ClientException $e) {
@@ -210,7 +212,8 @@ namespace Drupal\rocket_chat_api\RocketChat {
       }
       if (isset($resultHeader['content-type']) &&
           !isset($resultHeader['Content-Type'])) {
-        // Quick fix to prevent errors due to capitalization of content-type in the header.
+        // Quick fix to prevent errors due to capitalization of content-type
+        // in the header.
         $resultHeader['Content-Type'] = $resultHeader['content-type'];
       }
 
@@ -266,14 +269,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *
      * @param string $method
      *   The method to call (so the part after '/api/v1/').
-     * @param array $Options
+     * @param array $options
      *   Optional Data payload. for HTTP_POST calls.
      *
      * @return array
      *   Result array.
      */
-    public function getFromRocketChat($method = "info", $Options = NULL) {
-      return $this->sendToRocketChat(ApiClient::HTTP_GET, $method, $Options);
+    public function getFromRocketChat($method = "info", array $options = NULL) {
+      return $this->sendToRocketChat(ApiClient::HTTP_GET, $method, $options);
     }
 
     /**
@@ -286,7 +289,10 @@ namespace Drupal\rocket_chat_api\RocketChat {
       return $this->postToRocketChat('logout');
     }
 
-    /**
+    /*
+    /* *
+     * Execute as diffrent user.
+     *
      * @param string $otherUserId
      *   UserID of user to sudo as.
      * @param $functionName
@@ -296,7 +302,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *
      * @return mixed
      *   Result of Call.
-     */
+     * /
     public function sudo($otherUserId, $functionName, ...$args) {
 //      TODO Refactor this to use a special local config for use during sudo call. Disabled until such a time to limit its Security implication!
       throw new \BadFunctionCallException("SUDO is Disabled until a security fix is implemented!", 255);
@@ -332,13 +338,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
 //          //TODO Implement me
 //            return;
     }
+    */
 
     /**
      * Retrieve User information.
      *
-     * @param $userId string
+     * @param string $userId
      *   The userId to look up.
-     * @param $userName string
+     * @param string $userName
      *   The username to look up.
      *
      * @return array
@@ -360,6 +367,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * Logout a session.
      *
      * @return array
+     *   Result array
      */
     public function usersList() {
       return $this->getFromRocketChat('users.list');
@@ -368,7 +376,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     /**
      * Create a new Channel.
      *
-     * @param $name
+     * @param string $name
      *   The new channel name.
      * @param array $members
      *   The list of the users of this channel.
@@ -376,7 +384,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @return array
      *   Result array.
      */
-    public function channelsCreate($name, $members = NULL) {
+    public function channelsCreate($name, array $members = NULL) {
       $options["name"] = $name;
       if (!empty($members)) {
         $options['members'] = $members;
@@ -415,11 +423,12 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * Retrieve User information.
      *
      * @param string $roomId
-     *   the roomId to look up
+     *   The roomId to look up.
      * @param string $roomName
-     *   the room name to look up.
+     *   The room name to look up.
      *
      * @return array
+     *   Result array
      */
     public function channelsInfo($roomId = NULL, $roomName = NULL) {
       $req = [];
