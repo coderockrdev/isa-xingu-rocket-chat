@@ -225,11 +225,11 @@ class RocketChatSettingsForm extends ConfigFormBase {
       $user = (empty($form_user) ? $config->get('user') : $form_user);
       $secret = (empty($form_secret) ? $config->get('secret') : $form_secret);
 
-      $memConfig = new InMemoryConfig($apiConfig,$user,$secret);
+      $memConfig = new InMemoryConfig($apiConfig, $user, $secret);
 
       $apiClient = new ApiClient($memConfig);
 
-      $loginState = $apiClient->login($user,$secret);
+      $loginState = $apiClient->login($user, $secret);
 
       if ($loginState) {
         $apiConfig->setElement('rocket_chat_uid', $memConfig->getElement('rocket_chat_uid', ""));

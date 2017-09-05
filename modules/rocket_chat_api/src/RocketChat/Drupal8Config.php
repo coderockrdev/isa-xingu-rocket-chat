@@ -25,10 +25,10 @@ namespace Drupal\rocket_chat_api\RocketChat {
     /**
      * The config factory.
      *
-     * Subclasses should use the self::config() method, which may be overridden to
-     * address specific needs when loading config, rather than this property
-     * directly. See \Drupal\Core\Form\ConfigFormBase::config() for an example of
-     * this.
+     * Subclasses should use the self::config() method, which may be overridden
+     * to address specific needs when loading config, rather than this property
+     * directly.
+     * See \Drupal\Core\Form\ConfigFormBase::config() for an example of this.
      *
      * @var \Drupal\Core\Config\ConfigFactoryInterface
      */

@@ -49,7 +49,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     private $uid;
 
     /**
-     *  User Access Token.
+     * User Access Token.
      *
      * @var string
      *   Store's the user token.
@@ -65,7 +65,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     private $debug;
 
     /**
-     *  A Config type that holds stored values.
+     * A Config type that holds stored values.
      *
      * @var RocketChatConfigInterface
      *   Hold a reference to a Interface that actually does store data.
