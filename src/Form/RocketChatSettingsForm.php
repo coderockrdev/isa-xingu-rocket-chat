@@ -34,6 +34,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\State\StateInterface;
 use Drupal\rocket_chat_api\RocketChat\ApiClient;
 use Drupal\rocket_chat_api\RocketChat\Drupal8Config;
+use Drupal\rocket_chat_api\RocketChat\InMemoryConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
@@ -113,13 +114,14 @@ class RocketChatSettingsForm extends ConfigFormBase {
       '#type' => 'url',
       '#title' => $this->t('The Rocket.chat server address:'),
       '#required' => FALSE,
-      '#attributes' => [
-        'placeholder' => "https://demo.rocket.chat/",
-      ],
     ];
     // Only set the value if there is a value.
     if (!empty($server)) {
       $form['url']['#defaultvalue'] = $server;
+      $form['url']['#attributes']['placeholder'] = $server;
+    }
+    else {
+      $form['url']['#attributes']['placeholder'] = "https://demo.rocket.chat/";
     }
 
     // Only add the following when the rocket_chat_api module is enabled.
@@ -130,7 +132,10 @@ class RocketChatSettingsForm extends ConfigFormBase {
         '#title' => $this->t('Rocketchat Admin User:'),
         '#required' => FALSE,
         '#attributes' => [
-          'placeholder' => $config->get('user'),
+          'placeholder' => (empty($config->get('user')) ?
+              "<Rocket chat Admin user name>" :
+              $config->get('user')
+          ),
         ],
       ];
       $form['rocketchat_key'] = [
@@ -153,10 +158,27 @@ class RocketChatSettingsForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // All required fields are submitted.
     if (!empty($form_state->getValue('url'))) {
-
       // Check if host server is running.
-      if (!Utility::serverRun(
-        $form_state->getValue('url'))) {
+      $smokeCheck = Utility::serverRun($form_state->getValue('url'));
+      $info = [];
+      if($smokeCheck) {
+        $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state);
+        $empty = "";
+        $memConfig = new InMemoryConfig($apiConfig, $empty, $empty);
+        $memConfig->setElement('rocket_chat_url', $form_state->getValue('url'));
+        $apiClient = new ApiClient($memConfig);
+
+        //Check if the Rocket chat is actually functional with an info call.
+        $info = $apiClient->info();
+      }
+      if ( !$smokeCheck || !$info['status'] == "OK"){
+        $erred = TRUE;
+      }
+      else {
+        $erred = FALSE;
+      }
+
+      if ($erred) {
         $form_state->setErrorByName('url', "<div class=\"error rocketchat\">" .
           $this->t('<strong>Server is not working!</strong><br>') .
           $this->t('<em>incorrect address</em>,') . ' ' .
@@ -189,6 +211,40 @@ class RocketChatSettingsForm extends ConfigFormBase {
           ['@url' => $form_url, "@oldurl" => (empty($oldUrl) ? $this->t("Not Set") : $oldUrl)]
         )
       );
+      if (empty($form_user)) {
+        $form_user = $config->get('user');
+      }
+      if (empty($form_secret)) {
+        $form_secret = $config->get('secret');
+      }
+    }
+
+    if (!empty($form_user) || !empty($form_secret)) {
+      $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state);
+
+      $user = (empty($form_user) ? $config->get('user') : $form_user);
+      $secret = (empty($form_secret) ? $config->get('secret') : $form_secret);
+
+      $memConfig = new InMemoryConfig($apiConfig,$user,$secret);
+
+      $apiClient = new ApiClient($memConfig);
+
+      $loginState = $apiClient->login($user,$secret);
+
+      if($loginState) {
+        $apiConfig->setElement('rocket_chat_uid',$memConfig->getElement('rocket_chat_uid',""));
+        $apiConfig->setElement('rocket_chat_uit',$memConfig->getElement('rocket_chat_uit',""));
+        $user = $apiClient->whoAmI();
+        $user['body']['username'];
+        drupal_set_message(
+          $this->t('Rocketchat User [@user]', ['@user' => $user['body']['username']])
+        );
+      } else {
+        // Login failed, unset the credentials.
+        $form_user = NULL;
+        $form_secret = NULL;
+      }
+
     }
 
     if (!empty($form_user)) {
@@ -211,19 +267,6 @@ class RocketChatSettingsForm extends ConfigFormBase {
       );
     }
 
-    if (!empty($form_user) || !empty($form_secret)) {
-      // Logging in with new credentials.
-      $this->state->deleteMultiple(['rocket_chat_uid', 'rocket_chat_uit']);
-      $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state);
-      $apiClient = new ApiClient($apiConfig);
-      if ($apiClient->login($config->get('user'), $config->get('secret'))) {
-        $user = $apiClient->whoAmI();
-        $user['body']['username'];
-        drupal_set_message(
-          $this->t('Rocketchat User [@user]', ['@user' => $user['body']['username']])
-        );
-      }
-    }
   }
 
 }

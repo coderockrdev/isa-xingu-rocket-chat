@@ -18,9 +18,8 @@ namespace Drupal\rocket_chat_api\RocketChat {
    * calls or some other technique.
    */
 
-  use \GuzzleHttp\Client;
-  use \GuzzleHttp\Exception\ClientException;
-  use \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface;
+  use GuzzleHttp\Client as GuzzleClient;
+  use GuzzleHttp\Exception\ClientException;
 
   /**
    * Class ApiClient.
@@ -42,9 +41,9 @@ namespace Drupal\rocket_chat_api\RocketChat {
     const HTTP_POST = 'POST';
 
     /**
-     * CLient Object.
+     * GuzzleClient Object.
      *
-     * @var \GuzzleHttp\Client
+     * @var GuzzleClient
      *  This object is a reference to the Guzzle Client.
      */
     private $client;
@@ -60,6 +59,16 @@ namespace Drupal\rocket_chat_api\RocketChat {
     private $loggedIn = FALSE;
 
     /**
+     * Is the CLient Logged in.
+     *
+     * @return bool
+     *   Are we Logged in?
+     */
+    public function isLoggedIn(): bool {
+      return $this->loggedIn;
+    }
+
+    /**
      * ApiClient constructor.
      *
      *  Loads in the configuration from the Drupal Variables and preparers the
@@ -72,17 +81,17 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *   stored login tokens will be used. This is to facilitate login and
      *   non-auth calls. Or in other words, is this a login call.
      */
-    public function __construct(RocketChatConfigInterface $config = NULL,
+    public function __construct(RocketChatConfigInterface $config,
                                 $login = FALSE) {
       $this->config = $config;
       if (!empty($config)) {
         $this->client = $this->createClient($login);
         $userToken = $this->config->getElement("rocket_chat_uit");
         if (empty($userToken)) {
-          $this->loggedIn = $this->login(
-            $this->config->getElement("user"),
-            $this->config->getElement("secret")
-          );
+          $this->loggedIn = FALSE;
+        }
+        else {
+          $this->loggedIn = TRUE;
         }
       }
       else {
@@ -96,7 +105,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @param bool $login
      *   Filter out the login credentials.
      *
-     * @return \GuzzleHttp\Client
+     * @return GuzzleClient
      *   New HTTP Client.
      */
     private function createClient($login = FALSE) {
@@ -116,7 +125,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
         unset($guzzleConfig['headers']);
       }
       $guzzleConfig['headers']['Content-Type'] = 'application/json';
-      return new Client($guzzleConfig);
+      return new GuzzleClient($guzzleConfig);
     }
 
     /**
@@ -136,10 +145,12 @@ namespace Drupal\rocket_chat_api\RocketChat {
       $this->client = $this->createClient(TRUE);
       $params = ['username' => $id, 'password' => $token];
       $result = $this->postToRocketChat('login', ['json' => $params]);
-      // $test = self::validateReturn($result);
-      $resultString = $result['body'];
+      $test = self::validateReturn($result);
+      if(test) {
+        $resultString = $result['body'];
+      }
 
-      if (!($resultString['status'] == 'success')) {
+      if (!$test && !($resultString['status'] == 'success')) {
         $this->config->notify("Login to $rocket was Unsuccessful.", 'error');
         unset($this->client);
         $this->client = $oldClient;
@@ -153,6 +164,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
         unset($resultString['data']['authToken']);
         $this->config->notify("Login to $rocket was Successful.", 'status');
         $this->client = $this->createClient(FALSE);
+        $this->loggedIn = TRUE;
         return TRUE;
       }
     }
@@ -168,7 +180,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @return array
      *   Result array.
      */
-    public function postToRocketChat($method = "info", array $options = NULL) {
+    public function postToRocketChat($method = "info", array $options = []) {
       return $this->sendToRocketChat(ApiClient::HTTP_POST, $method, $options);
     }
 
@@ -221,7 +233,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
         $resultHeader['content-type'][0] = "Error";
       }
       if (isset($resultHeader['content-type']) &&
-          !isset($resultHeader['Content-Type'])) {
+        !isset($resultHeader['Content-Type'])) {
         // Quick fix to prevent errors due to capitalization of content-type
         // in the header.
         $resultHeader['Content-Type'] = $resultHeader['content-type'];
@@ -242,25 +254,32 @@ namespace Drupal\rocket_chat_api\RocketChat {
     }
 
     /**
-     * Validate the Return of Rocketchat.
+     * Checks for several diffrent type of error states.
      *
      * @param array $result
      *   Result to check.
      *
      * @return bool
-     *   Validation result.
-     *
-     * @deprecated currently not effective code.
+     *   does the Return seem ok?
      */
-    public static function validateReturn(array $result) {
-      // TODO implement a validation for a guzzle return. currently defunct.
-      //
-      //      $result;
-      //      if(is_object($result) &&
-      //         $result instanceof \GuzzleHttp\Psr7\Response) {
-      //        //Guzzle Response
-      //      }
-      // TODO Implement Return Validation Checks!
+    public static function validateReturn(array &$result) {
+      if (!isset($result)){
+        return FALSE;
+      }
+      if (empty($result)) {
+        return FALSE;
+      }
+      if (!is_array($result)) {
+        return FALSE;
+      }
+      if(!isset($result['status'])) {
+        return FALSE;
+      }
+      if($result['status'] = 'failed') {
+        return FALSE;
+      }
+
+      // All seems OK, so returning TRUE;
       return TRUE;
     }
 
@@ -285,8 +304,18 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @return array
      *   Result array.
      */
-    public function getFromRocketChat($method = "info", array $options = NULL) {
+    public function getFromRocketChat($method = "info", array $options = []) {
       return $this->sendToRocketChat(ApiClient::HTTP_GET, $method, $options);
+    }
+
+    /**
+     * Retrieve the Rocket chat status info.
+     *
+     * @return array
+     *   Result array.
+     */
+    public function info() {
+      return $this->getFromRocketChat('info');
     }
 
     /**
@@ -296,10 +325,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *   Result array.
      */
     public function logout() {
-      return $this->postToRocketChat('logout');
+      $logoutResult = $this->postToRocketChat('logout');
+      if(self::validateReturn($logoutResult)) {
+        $this->loggedIn = FALSE;
+      }
+      return $logoutResult;
     }
 
-    /* *
+    /**
      * Execute as different user.
      *
      * @param string $otherUserId
@@ -309,45 +342,43 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @param array ...$args
      *   Function Arguments.
      *
-     * @return mixed
+     * @return mixed Result of Call.
      *   Result of Call.
-     * /
-    public function sudo($otherUserId, $functionName, ...$args) {
-//      TODO Refactor this to use a special local config for use during sudo call. Disabled until such a time to limit its Security implication!
-      throw new \BadFunctionCallException("SUDO is Disabled until a security fix is implemented!", 255);
-//
-//          // NOTE $args === func_get_args();
-//          if($functionName == 'login' || $functionName == 'logout') {
-//            throw new \BadFunctionCallException("$functionName must be used directly not through sudo.",502);
-//          }
-//          $retVal = NULL;
-//          $originalConfig = $this->config;
-//          $newConfig = clone $this->config;
-//          try {
-//            $authToken = $this->postToRocketChat('users.createToken',['json' => ['userId' => $otherUserId]]);
-//
-//            //check     $authToken = $this->postToRocketChat('users.createToken',['json' => ['userId' => $otherUserId]]) yields result;
-//
-//            $newConfig->setElement('rocket_chat_uid', $authToken['body']['data']['userId']);
-//            $newConfig->setElement('rocket_chat_uit',$authToken['body']['data']['authToken']);
-//
-//            $this->config = $newConfig;
-//            $this->client = $this->createClient(false);
-//
-//            //DO Function call
-//            $retVal = $this->$functionName(...$args );
-//          } catch (\Exception $e) { //TODO IMPLEMENT!!!
-//
-//          } finally {
-//            $this->config = $originalConfig;
-//            $this->client = $this->createClient(false);
-//          }
-//          return $retVal;
-//          //Do Call
-//          //TODO Implement me
-//            return;
-    }
+     *
+     * @throws \Exception
+     *   When there is an exception in the call, the exception is rethrown after cleanup.
+     *
      */
+    public function sudo($otherUserId, $functionName, ...$args) {
+      $empty = "";
+
+      if ($functionName == 'login' || $functionName == 'logout') {
+        throw new \BadFunctionCallException("$functionName must be used directly not through sudo.", 502);
+      }
+      $returnValue = NULL;
+      $originalConfig = $this->config;
+      $newConfig = new InMemoryConfig($this->config, $empty, $empty);
+      try {
+
+        $authToken = $this->postToRocketChat('users.createToken', ['json' => ['userId' => $otherUserId]]);
+
+        $newConfig->setElement('rocket_chat_uid', $authToken['body']['data']['userId']);
+        $newConfig->setElement('rocket_chat_uit', $authToken['body']['data']['authToken']);
+
+        $this->config = $newConfig;
+        $this->client = $this->createClient(FALSE);
+
+        //DO Function call
+        $returnValue = $this->$functionName(...$args);
+      } catch (\Exception $e) {
+        throw $e;
+
+      } finally {
+        $this->config = $originalConfig;
+        $this->client = $this->createClient(FALSE);
+      }
+      return $returnValue;
+    }
 
     /**
      * Retrieve User information.
@@ -393,7 +424,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @return array
      *   Result array.
      */
-    public function channelsCreate($name, array $members = NULL) {
+    public function channelsCreate($name, array $members = []) {
       $options["name"] = $name;
       if (!empty($members)) {
         $options['members'] = $members;

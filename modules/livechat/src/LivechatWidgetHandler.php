@@ -37,8 +37,6 @@ namespace Drupal\livechat;
  *
  * @Class LivechatWidgetHandler.
  *
- * @Class LivechatWidgetHandler.
- *
  * @package Drupal\livechat
  */
 class LivechatWidgetHandler {

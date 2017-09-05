@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\rocket_chat_api\RocketChat;
+namespace Drupal\rocket_chat_api\RocketChat {
 
 /*
  * Created by 040lab b.v. using PhpStorm from Jetbrains.
@@ -107,7 +107,10 @@ class Drupal8Config implements RocketChatConfigInterface, ContainerInjectionInte
         // Fallthrough.
       case 'rocket_chat_uit':
         // Fallthrough.
-        $this->state->set($elementName, $newValue);
+        $this->state->delete($elementName);
+        if(!empty($newValue)) {
+          $this->state->set($elementName, $newValue);
+        }
         break;
 
     }
@@ -134,4 +137,6 @@ class Drupal8Config implements RocketChatConfigInterface, ContainerInjectionInte
     return drupal_set_message($message, $type);
   }
 
+}
+ 
 }
