@@ -62,8 +62,11 @@ namespace Drupal\rocket_chat_api\RocketChat {
     /**
      * ApiClient constructor.
      *
+     *  Loads in the configuration from the Drupal Variables and preparers the
+     *  Client with some defaults and base values for ease of use.
+     *
      * @param \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface $config
-     *   Config Object.
+     *   RocketChatConfigInterface that holds the glue between the diffrent implimentations of this Code.
      * @param bool $login
      *   When true the stored login tokens will not be used. when false the
      *   stored login tokens will be used. This is to facilitate login and
@@ -250,14 +253,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @deprecated currently not effective code.
      */
     public static function validateReturn(array $result) {
-//       TODO implement a validation for a guzzle return. currently defunct.
-//
-//            $result;
-//            if(is_object($result) &&
-//               $result instanceof \GuzzleHttp\Psr7\Response) {
-//              //Guzzle Response
-//            }
-//       TODO Implement Return Validation Checks!
+      // TODO implement a validation for a guzzle return. currently defunct.
+      //
+      //      $result;
+      //      if(is_object($result) &&
+      //         $result instanceof \GuzzleHttp\Psr7\Response) {
+      //        //Guzzle Response
+      //      }
+      // TODO Implement Return Validation Checks!
       return TRUE;
     }
 

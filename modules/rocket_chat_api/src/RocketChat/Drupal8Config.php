@@ -14,6 +14,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\State\StateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface as RocketChatConfig;
 
 /**
  * Class Drupal8Config connects the API with the drupal system.
