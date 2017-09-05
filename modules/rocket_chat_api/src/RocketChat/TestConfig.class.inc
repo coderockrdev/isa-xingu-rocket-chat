@@ -9,6 +9,11 @@ namespace Drupal\rocket_chat_api\RocketChat {
    * Time: 3:41 PM
    */
 
+  /**
+   * Class Test7Config For Testing.
+   *
+   * @package Drupal\rocket_chat_api\RocketChat
+   */
   class Test7Config extends Drupal8Config {
 
     /**
@@ -28,7 +33,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     private $userToken;
 
     /**
-     * Rocket chat Server
+     * Rocket chat Server.
      *
      * @var string
      *   Server.
@@ -39,14 +44,18 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * {@inheritdoc}
      */
     public function getElement($elementName, $default = NULL) {
-      switch($elementName) {
-        case "rocket_chat_uid": return $this->userId;
+      switch ($elementName) {
+        case "rocket_chat_uid":
+          return $this->userId;
 
-        case "rocket_chat_uit": return $this->userToken;
+        case "rocket_chat_uit":
+          return $this->userToken;
 
-        case "rocket_chat_url": return $this->server;
+        case "rocket_chat_url":
+          return $this->server;
 
-        default : return $default;
+        default :
+          return $default;
       }
     }
 
