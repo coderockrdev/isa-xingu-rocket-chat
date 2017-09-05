@@ -11,8 +11,28 @@ namespace Drupal\rocket_chat_api\RocketChat {
 
   class Test7Config extends Drupal8Config {
 
+    /**
+     * User Id.
+     *
+     * @var string
+     *    Id.
+     */
     private $userId;
+
+    /**
+     * User Token.
+     *
+     * @var string
+     *    Secret.
+     */
     private $userToken;
+
+    /**
+     * Rocket chat Server
+     *
+     * @var string
+     *   Server.
+     */
     private $server = "http://127.0.0.1:3000";
 
     /**
@@ -27,29 +47,24 @@ namespace Drupal\rocket_chat_api\RocketChat {
         case "rocket_chat_url": return $this->server;
 
         default : return $default;
-
       }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getJsonDecoder() {
-      return parent::getJsonDecoder();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setElement($elementName, $newValue) {
-      switch($elementName) {
+      switch ($elementName) {
         case "rocket_chat_uid": $this->userId = $newValue;
-                                break;
+          break;
+
         case "rocket_chat_uit": $this->userToken = $newValue;
-                                break;
+          break;
+
         case "rocket_chat_url": $this->server = $newValue;
-                                break;
-        default : fwrite(STDERR, "TEST SET [$elementName=>$newValue]\n");
+          break;
+
+        default: fwrite(STDERR, "TEST SET [$elementName=>$newValue]\n");
       }
     }
 
