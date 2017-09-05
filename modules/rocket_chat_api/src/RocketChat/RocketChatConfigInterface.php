@@ -1,4 +1,7 @@
 <?php
+
+namespace Drupal\rocket_chat_api\RocketChat {
+
 /*
  * Created by 040lab b.v. using PhpStorm from Jetbrains.
  * User: Lawri van Buël
@@ -6,7 +9,6 @@
  * Time: 16:33
  */
 
-namespace Drupal\rocket_chat_api\RocketChat {
 
   /**
    * Interface to make an Arbitrary storage backend for the config elements.
