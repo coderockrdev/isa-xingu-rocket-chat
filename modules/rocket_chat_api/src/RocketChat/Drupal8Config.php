@@ -2,7 +2,7 @@
 
 namespace Drupal\rocket_chat_api\RocketChat;
 
-/**
+/*
  * Created by 040lab b.v. using PhpStorm from Jetbrains.
  * User: Lawri van Buël
  * Date: 20/06/17
@@ -75,10 +75,11 @@ class Drupal8Config implements RocketChatConfigInterface, ContainerInjectionInte
         $elementName = "server";
       default:
         $value = $this->config->get($elementName);
-        if(empty($value)) {
+        if (empty($value)) {
           $value = $default;
         }
         return $value;
+
       case 'rocket_chat_uid':
         // Fallthrough.
       case 'rocket_chat_uit':
@@ -100,14 +101,15 @@ class Drupal8Config implements RocketChatConfigInterface, ContainerInjectionInte
       default:
         $config->clear($elementName)->set($elementName, $newValue)->save();
         break;
+
       case 'rocket_chat_uid':
         // Fallthrough.
       case 'rocket_chat_uit':
         // Fallthrough.
         $this->state->set($elementName, $newValue);
         break;
+
     }
-    return;
   }
 
   /**

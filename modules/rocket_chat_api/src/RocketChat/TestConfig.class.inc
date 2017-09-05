@@ -81,8 +81,12 @@ namespace Drupal\rocket_chat_api\RocketChat {
 }
 
 namespace {
+  
+  /**
+   * {@inheritdoc}
+   */
   function drupal_json_decode($json) {
     return \GuzzleHttp\json_decode($json, TRUE);
   }
-}
 
+}
