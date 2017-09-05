@@ -54,7 +54,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
         case "rocket_chat_url":
           return $this->server;
 
-        default :
+        default:
           return $default;
       }
     }
