@@ -20,6 +20,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
 
   use \GuzzleHttp\Client;
   use \GuzzleHttp\Exception\ClientException;
+  use \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface;
 
   /**
    * Class ApiClient
@@ -49,7 +50,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
 
     /**
      * Config Object.
-     * @var \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface Object
+     * @var \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface $config
      *   RocketChatConfigInterface object.
      */
     private $config;
@@ -58,24 +59,25 @@ namespace Drupal\rocket_chat_api\RocketChat {
 
     /**
      * ApiClient constructor.
-     *  Loads in the configuration from the Drupal Variables and preparers the
-     *  Client with some defaults and base values for ease of use.
      *
      * @param \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface $config
      *   Config Object.
-     *
      * @param bool $login
-     *  When true the stored login tokens will not be used. when false the
+     *   When true the stored login tokens will not be used. when false the
      *   stored login tokens will be used. This is to facilitate login and
      *   non-auth calls. Or in other words, is this a login call.
      */
-    public function __construct($config = NULL, $login = FALSE) {
+    public function __construct(RocketChatConfigInterface $config = NULL,
+                                $login = FALSE) {
       $this->config = $config;
       if (!empty($config)) {
         $this->client = $this->createClient($login);
         $userToken = $this->config->getElement("rocket_chat_uit");
         if (empty($userToken)) {
-          $this->loggedIn = $this->login($this->config->getElement("user"), $this->config->getElement("secret"));
+          $this->loggedIn = $this->login(
+            $this->config->getElement("user"),
+            $this->config->getElement("secret")
+          );
         }
       }
       else {
