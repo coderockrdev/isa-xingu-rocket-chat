@@ -17,42 +17,56 @@ namespace Drupal\rocket_chat_api\RocketChat {
   class InMemoryConfig implements RocketChatConfigInterface {
 
     /**
+     * Server URL.
+     *
      * @var string
-     *   Stores the Server URL.
+     *   Store's  the Server URL.
      */
     private $url;
 
     /**
+     * User name.
+     *
      * @var string
-     *   Stores the user name.
+     *   Store's  the user name.
      */
     private $user;
 
     /**
+     * User password.
+     *
      * @var string
-     *   Stores the password.
+     *   Store's  the password.
      */
     private $password;
 
     /**
+     * User ID.
+     *
      * @var string
-     *   storers the user ID.
+     *   Store's  the user ID.
      */
     private $uid;
 
     /**
+     *  User Access Token.
+     *
      * @var string
-     *   Storers the user token.
+     *   Store's the user token.
      */
     private $utk;
 
     /**
+     * Debugging flag.
+     *
      * @var bool
      *   Are we Debugging?
      */
     private $debug;
 
     /**
+     *  A Config type that holds stored values.
+     *
      * @var RocketChatConfigInterface
      *   Hold a reference to a Interface that actually does store data.
      */
@@ -62,11 +76,11 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * InMemoryConfig constructor.
      *
      * @param \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface $storedConfig
-     *    Stored Config Object (READ ONLY).
+     *   Stored Config Object (READ ONLY).
      * @param string $user
-     *    User name.
+     *   User name.
      * @param string $password
-     *    User Password.
+     *   User Password.
      */
     public function __construct(RocketChatConfigInterface &$storedConfig, &$user, &$password) {
       $this->superConfig = $storedConfig;
@@ -94,7 +108,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
           return $this->utk;
 
         default:
-          throw new \InvalidArgumentException("[$elementName] not found",144);
+          throw new \InvalidArgumentException("[$elementName] not found", 144);
       }
     }
 
@@ -136,7 +150,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * {@inheritdoc}
      */
     public function notify($message, $type) {
-      return $this->superConfig->notify($message,$type);
+      return $this->superConfig->notify($message, $type);
     }
 
   }

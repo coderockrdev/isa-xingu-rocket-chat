@@ -26,7 +26,7 @@ namespace Drupal\rocket_chat_api_test\Form;
  * @file
  * Contains \Drupal\rocket_chat_api_test\Form\ApiTestForm.
  *
- * This Form allows you to test Rocket chat API calls through the rocket_API Module.
+ * This Form allows you to test Rocket chat API calls through the api Module.
  */
 
 use Drupal\Component\Serialization\Json;

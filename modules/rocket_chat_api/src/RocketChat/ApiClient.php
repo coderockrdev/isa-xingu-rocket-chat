@@ -75,7 +75,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *  Client with some defaults and base values for ease of use.
      *
      * @param \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface $config
-     *   RocketChatConfigInterface that holds the glue between the diffrent implimentations of this Code.
+     *   class that holds the glue between the implementation's of this Code.
      * @param bool $login
      *   When true the stored login tokens will not be used. when false the
      *   stored login tokens will be used. This is to facilitate login and
@@ -146,7 +146,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
       $params = ['username' => $id, 'password' => $token];
       $result = $this->postToRocketChat('login', ['json' => $params]);
       $test = self::validateReturn($result);
-      if(test) {
+      if ($test) {
         $resultString = $result['body'];
       }
 
@@ -254,7 +254,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     }
 
     /**
-     * Checks for several diffrent type of error states.
+     * Checks for several different type of error states.
      *
      * @param array $result
      *   Result to check.
@@ -263,7 +263,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *   does the Return seem ok?
      */
     public static function validateReturn(array &$result) {
-      if (!isset($result)){
+      if (!isset($result)) {
         return FALSE;
       }
       if (empty($result)) {
@@ -272,14 +272,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
       if (!is_array($result)) {
         return FALSE;
       }
-      if(!isset($result['status'])) {
+      if (!isset($result['status'])) {
         return FALSE;
       }
-      if($result['status'] = 'failed') {
+      if ($result['status'] = 'failed') {
         return FALSE;
       }
 
-      // All seems OK, so returning TRUE;
+      // All seems OK, so returning TRUE.
       return TRUE;
     }
 
@@ -326,7 +326,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      */
     public function logout() {
       $logoutResult = $this->postToRocketChat('logout');
-      if(self::validateReturn($logoutResult)) {
+      if (self::validateReturn($logoutResult)) {
         $this->loggedIn = FALSE;
       }
       return $logoutResult;
@@ -337,17 +337,16 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *
      * @param string $otherUserId
      *   UserID of user to sudo as.
-     * @param $functionName
+     * @param string $functionName
      *   Function Name to call.
-     * @param array ...$args
+     * @param array $args
      *   Function Arguments.
      *
-     * @return mixed Result of Call.
+     * @return mixed
      *   Result of Call.
      *
      * @throws \Exception
-     *   When there is an exception in the call, the exception is rethrown after cleanup.
-     *
+     *   When there is an exception in the call, it is rethrown after cleanup.
      */
     public function sudo($otherUserId, $functionName, ...$args) {
       $empty = "";
@@ -368,9 +367,10 @@ namespace Drupal\rocket_chat_api\RocketChat {
         $this->config = $newConfig;
         $this->client = $this->createClient(FALSE);
 
-        //DO Function call
+        // Do Function call!
         $returnValue = $this->$functionName(...$args);
-      } catch (\Exception $e) {
+      }
+      catch (\Exception $e) {
         throw $e;
 
       } finally {

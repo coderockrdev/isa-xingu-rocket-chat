@@ -161,17 +161,17 @@ class RocketChatSettingsForm extends ConfigFormBase {
       // Check if host server is running.
       $smokeCheck = Utility::serverRun($form_state->getValue('url'));
       $info = [];
-      if($smokeCheck) {
+      if ($smokeCheck) {
         $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state);
         $empty = "";
         $memConfig = new InMemoryConfig($apiConfig, $empty, $empty);
         $memConfig->setElement('rocket_chat_url', $form_state->getValue('url'));
         $apiClient = new ApiClient($memConfig);
 
-        //Check if the Rocket chat is actually functional with an info call.
+        // Check if the Rocket chat is actually functional with an info call.
         $info = $apiClient->info();
       }
-      if ( !$smokeCheck || !$info['status'] == "OK"){
+      if (!$smokeCheck || !$info['status'] == "OK") {
         $erred = TRUE;
       }
       else {
@@ -231,15 +231,16 @@ class RocketChatSettingsForm extends ConfigFormBase {
 
       $loginState = $apiClient->login($user,$secret);
 
-      if($loginState) {
-        $apiConfig->setElement('rocket_chat_uid',$memConfig->getElement('rocket_chat_uid',""));
-        $apiConfig->setElement('rocket_chat_uit',$memConfig->getElement('rocket_chat_uit',""));
+      if ($loginState) {
+        $apiConfig->setElement('rocket_chat_uid', $memConfig->getElement('rocket_chat_uid', ""));
+        $apiConfig->setElement('rocket_chat_uit', $memConfig->getElement('rocket_chat_uit', ""));
         $user = $apiClient->whoAmI();
         $user['body']['username'];
         drupal_set_message(
           $this->t('Rocketchat User [@user]', ['@user' => $user['body']['username']])
         );
-      } else {
+      }
+      else {
         // Login failed, unset the credentials.
         $form_user = NULL;
         $form_secret = NULL;
