@@ -81,7 +81,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
 }
 
 namespace {
-  
+
   /**
    * {@inheritdoc}
    */

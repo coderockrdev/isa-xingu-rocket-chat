@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Created by 040lab b.v. using PhpStorm from Jetbrains.
  * User: Lawri van Buël
  * Date: 20/06/17
@@ -9,8 +9,8 @@
 namespace Drupal\rocket_chat_api\RocketChat {
 
   /**
-   * Interface RocketChatConfigInterface
-   *  interface to make an Arbitrary storage backend for the config elements.
+   * Interface to make an Arbitrary storage backend for the config elements.
+   *
    * @package RocketChat
    */
   interface RocketChatConfigInterface {
@@ -19,12 +19,12 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * Get a RocketChatConfigInterface Element.
      *
      * @param string $elementName
-     *  Key value to retrieve from the RocketChatConfigInterface Backend.
+     *   Key value to retrieve from the RocketChatConfigInterface Backend.
      * @param string $default
-     *  A possible Default to use when no config is found in the backend.
+     *   A possible Default to use when no config is found in the backend.
      *
      * @return mixed
-     *  The retrieved config value.
+     *   The retrieved config value.
      */
     public function getElement($elementName, $default = NULL);
 
@@ -39,7 +39,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     public function setElement($elementName, $newValue);
 
     /**
-     * is this a Debug / verbose Run.
+     * Is this a Debug / verbose Run.
      *
      * @return bool
      *   Are we in debug mode?
