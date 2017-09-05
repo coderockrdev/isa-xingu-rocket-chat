@@ -23,7 +23,8 @@ namespace Drupal\rocket_chat_api\RocketChat {
 
   /**
    * Class ApiClient
-   *  This  class connects the php to the RocketChat Server though its REST-API.
+   *
+   * This class connects the php to the RocketChat Server though its REST-API.
    *
    * @package RocketChat
    */
@@ -40,12 +41,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
     const HTTP_POST = 'POST';
 
     /**
+     * CLient Object.
      * @var Client Object
      *  This object is a reference to the Guzzle Client.
      */
     private $client;
 
     /**
+     * Config Object.
      * @var \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface Object
      *   RocketChatConfigInterface object.
      */
@@ -87,7 +90,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *   Filter out the login credentials.
      *
      * @return \GuzzleHttp\Client
-     *    New HTTP Client.
+     *   New HTTP Client.
      */
     private function createClient($login = FALSE) {
       $userId = $this->config->getElement("rocket_chat_uid");
@@ -112,9 +115,9 @@ namespace Drupal\rocket_chat_api\RocketChat {
     /**
      * Do a Login on the Rocket Chat REST API.
      *
-     * @param $id
+     * @param string $id
      *   The Username.
-     * @param $token
+     * @param string $token
      *   The Authentication token. aka password.
      *
      * @return bool
@@ -126,7 +129,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
       $this->client = $this->createClient(TRUE);
       $params = ['username' => $id, 'password' => $token];
       $result = $this->postToRocketChat('login', ['json' => $params]);
-//      $test = self::validateReturn($result);
+      // $test = self::validateReturn($result);
       $resultString = $result['body'];
 
       if (!($resultString['status'] == 'success')) {
@@ -242,7 +245,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *
      * @deprecated currently not effective code.
      */
-    public static function validateReturn($result) {
+    public static function validateReturn(array $result) {
 //       TODO implement a validation for a guzzle return. currently defunct.
 //
 //            $result;
@@ -289,9 +292,8 @@ namespace Drupal\rocket_chat_api\RocketChat {
       return $this->postToRocketChat('logout');
     }
 
-    /*
     /* *
-     * Execute as diffrent user.
+     * Execute as different user.
      *
      * @param string $otherUserId
      *   UserID of user to sudo as.
@@ -338,7 +340,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
 //          //TODO Implement me
 //            return;
     }
-    */
+     */
 
     /**
      * Retrieve User information.
