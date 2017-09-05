@@ -2,7 +2,7 @@
 
 namespace Drupal\rocket_chat_api\RocketChat {
 
-  /**
+  /*
    * This namespace will hold all of our Rocket Chat specific code.
    * Namespaces are a great way to make sure we do not have collisions of our
    * code with some other part of the system.
@@ -23,7 +23,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
   use \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface;
 
   /**
-   * Class ApiClient
+   * Class ApiClient.
    *
    * This class connects the php to the RocketChat Server though its REST-API.
    *
@@ -43,14 +43,16 @@ namespace Drupal\rocket_chat_api\RocketChat {
 
     /**
      * CLient Object.
-     * @var Client Object
+     *
+     * @var \GuzzleHttp\Client
      *  This object is a reference to the Guzzle Client.
      */
     private $client;
 
     /**
      * Config Object.
-     * @var \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface $config
+     *
+     * @var \Drupal\rocket_chat_api\RocketChat\RocketChatConfigInterface
      *   RocketChatConfigInterface object.
      */
     private $config;
