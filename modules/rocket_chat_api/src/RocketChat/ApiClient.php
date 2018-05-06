@@ -59,7 +59,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     private $loggedIn = FALSE;
 
     /**
-     * Is the CLient Logged in.
+     * Is the Client Logged in.
      *
      * @return bool
      *   Are we Logged in?
@@ -122,6 +122,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
         ],
       ];
       if ($login) {
+        //Doing a fresh 'login' run.
         unset($guzzleConfig['headers']);
       }
       $guzzleConfig['headers']['Content-Type'] = 'application/json';
@@ -145,12 +146,8 @@ namespace Drupal\rocket_chat_api\RocketChat {
       $this->client = $this->createClient(TRUE);
       $params = ['username' => $id, 'password' => $token];
       $result = $this->postToRocketChat('login', ['json' => $params]);
-      $test = self::validateReturn($result);
-      if ($test) {
-        $resultString = $result['body'];
-      }
-
-      if (!$test && !($resultString['status'] == 'success')) {
+      $validReturn = self::validateReturn($result);
+      if (!$validReturn && ($result['body']['status'] !== 'success')) {
         $this->config->notify("Login to $rocket was Unsuccessful.", 'error');
         unset($this->client);
         $this->client = $oldClient;
@@ -158,10 +155,10 @@ namespace Drupal\rocket_chat_api\RocketChat {
       }
       else {
         unset($oldClient);
-        $this->config->setElement("rocket_chat_uid", $resultString['data']['userId']);
-        unset($resultString['data']['userId']);
-        $this->config->setElement("rocket_chat_uit", $resultString['data']['authToken']);
-        unset($resultString['data']['authToken']);
+        $this->config->setElement("rocket_chat_uid", $result['body']['data']['userId']);
+        unset($result['body']['data']['userId']);
+        $this->config->setElement("rocket_chat_uit", $result['body']['data']['authToken']);
+        unset($result['body']['data']['authToken']);
         $this->config->notify("Login to $rocket was Successful.", 'status');
         $this->client = $this->createClient(FALSE);
         $this->loggedIn = TRUE;
