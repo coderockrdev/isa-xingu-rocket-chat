@@ -5,4 +5,4 @@ configure: rocket_chat.admin_settings
 type: module
 core: 8.x
 dependencies:
-  - drupal:rocket_chat_api
+  - rocket_chat:rocket_chat_api
