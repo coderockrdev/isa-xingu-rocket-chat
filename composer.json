@@ -1,0 +1,22 @@
+{
+    "name": "drupal/rocket_chat",
+    "description": "Drupal Rocketchat integration Module, with Livechat and API support.",
+    "type": "drupal-module",
+    "homepage": "https://drupal.org/project/rocket_chat",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Lawri van Buël",
+            "email": "sysosmaster@2588960.no-reply.drupal.org",
+            "homepage": "https://www.drupal.org/u/sysosmaster",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/rocket_chat",
+        "Drupalchat": "rocketchat://drupalchat.me/channel/rocket.chat",
+        "source": "https://cgit.drupalcode.org/rocket_chat"
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}
