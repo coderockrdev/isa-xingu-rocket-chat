@@ -200,6 +200,8 @@ class LivechatWidgetHandler {
    *   Key to set the value in.
    * @param mixed $value
    *   Value to set in the key register.
+   * @return mixed
+   * @return mixed
    */
   private function buildJavaScriptArray($key, $value) {
     $ds = $this->form['#attached']['drupalSettings'][$this->getWidgetLibraryName()][$this->getWidgetLibraryRoute()][$key] = $value;

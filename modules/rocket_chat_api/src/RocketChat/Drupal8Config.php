@@ -9,6 +9,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
    * Time: 16:38
    */
 
+  use Drupal;
   use Drupal\Core\Config\ConfigFactoryInterface;
   use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
   use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -66,13 +67,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
      *   The ModuleHandler to interact with loaded modules.
      * @param \Drupal\Core\State\StateInterface $state
      *   The state interface to manipulate the States.
+     * @param \Drupal\Core\Messenger\MessengerInterface $messenger
      */
     public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state, MessengerInterface $messenger) {
       $this->config = $config_factory->get('rocket_chat.settings');
       $this->moduleHandler = $moduleHandler;
       $this->state = $state;
       $this->messenger = $messenger;
-      $this->Logger = \Drupal::logger("Rocket Chat API: Config");
+      $this->Logger = Drupal::logger("Rocket Chat API: Config");
     }
 
     /**

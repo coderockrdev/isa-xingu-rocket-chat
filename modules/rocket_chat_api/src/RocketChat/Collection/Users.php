@@ -1,6 +1,7 @@
 <?php
 namespace Drupal\rocket_chat_api\RocketChat\Collection;
 
+use Drupal;
 use Drupal\rocket_chat_api\RocketChat\RocketChatStateinterface as StateInterface;
 use Drupal\rocket_chat_api\RocketChat\ApiClient;
 use Drupal\rocket_chat_api\RocketChat\Element\Channel;
@@ -35,10 +36,10 @@ class Users implements CollectionInterface {
   public function __construct(StateInterface $state,ApiClient $apiClient) {
     $this->state = $state;
     $this->apiClient = $apiClient;
-    $this->Logger = \Drupal::logger("Rocket Chat API: Users");
+    $this->Logger = Drupal::logger("Rocket Chat API: Users");
+    //Todo Decouple this
 
   }
-
 
   /**
    * @param bool $forceReload
@@ -56,7 +57,6 @@ class Users implements CollectionInterface {
     }
     return $users;
   }
-
 
   public function refreshCache($forceReload = FALSE){
     $lastUpdate = $this->state->get(self::UPDATE,0);
@@ -85,6 +85,8 @@ class Users implements CollectionInterface {
    * @param array $users
    * @param int $offset
    * @param int $size
+   * @return float|int
+   * @return float|int
    * @todo needs better Error checking / missing detection.
    */
   public static function getAllUsersBatched(ApiClient &$api, array &$users, $offset=0, $size=500){

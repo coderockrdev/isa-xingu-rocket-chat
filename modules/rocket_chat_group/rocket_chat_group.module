@@ -31,6 +31,7 @@ function rocket_chat_group_group_content_insert(Drupal\group\Entity\GroupContent
 //Update
 /**
  * Implements hook_ENTITY_TYPE_update().
+ * @param \Drupal\group\Entity\GroupContent $entity
  */
 function rocket_chat_group_group_content_update(Drupal\group\Entity\GroupContent $entity) {
   try {
@@ -47,6 +48,7 @@ function rocket_chat_group_group_content_update(Drupal\group\Entity\GroupContent
 //Delete
 /**
  * Implements hook_ENTITY_TYPE_delete().
+ * @param \Drupal\group\Entity\GroupContent $entity
  */
 function rocket_chat_group_group_content_delete(Drupal\group\Entity\GroupContent $entity) {
   try {
@@ -62,6 +64,11 @@ function rocket_chat_group_group_content_delete(Drupal\group\Entity\GroupContent
 
 /**
  * Implements hook_theme().
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ * @return \array[][]
  */
 function rocket_chat_group_theme($existing, $type, $theme, $path) {
   return moduleHelper::themeRocketChannelBLock($existing, $type, $theme, $path);

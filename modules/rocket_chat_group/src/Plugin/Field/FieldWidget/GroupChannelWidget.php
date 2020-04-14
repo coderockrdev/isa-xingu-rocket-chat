@@ -104,6 +104,9 @@ class GroupChannelWidget extends WidgetBase {
 
   /**
    * Validate the channel name field.
+   * @param $element
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @return bool
    */
   public static function validate($element, FormStateInterface $form_state) {
     $value = $element['#value'];

@@ -3,6 +3,7 @@
 namespace Drupal\rocket_chat_api\RocketChat\Element;
 
 
+use Drupal;
 use Drupal\rocket_chat_api\RocketChat\ApiClient;
 use Drupal\rocket_chat_api\RocketChat\Collection\Users;
 use Drupal\rocket_chat_api\RocketChat\RocketChatStateinterface;
@@ -94,7 +95,7 @@ class User {
     $this->username = $username;
     $this->email = $email;
     $this->name = $name;
-    $this->Logger = \Drupal::logger("Rocket Chat API: User");
+    $this->Logger = Drupal::logger("Rocket Chat API: User");
   }
 
   /**
@@ -132,13 +133,14 @@ class User {
     }
     return NULL;
   }
+
   /**
    * Retrieve the Proxy, create the User if needed.
    *
    * @param \Drupal\rocket_chat_api\RocketChat\ApiClient $apiClient
    *
    * @return array|null
-   * @throws \Exception
+   * @throws Exception
    */
   public function getUserProxy(ApiClient $apiClient){
     if(empty($this->User)) {
@@ -150,9 +152,6 @@ class User {
       }
       $usersState = new Users($this->state, $apiClient);
       $users = $usersState->getCache();
-
-//      $users = new Users($this->state, $apiClient);
-//      self::getAllUsersBatched($apiClient, $users);
       if (!$this->isInList($users)) {
         $options = [];
         $options['json'] = [];

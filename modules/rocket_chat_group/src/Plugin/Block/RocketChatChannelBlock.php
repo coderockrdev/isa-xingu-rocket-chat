@@ -102,6 +102,8 @@ class RocketChatChannelBlock extends BlockBase implements ContainerFactoryPlugin
    *   Entity Manager
    * @param \Drupal\Core\Path\CurrentPathStack $currentPath
    *   Current Path handler.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $logger
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, MessengerInterface $messenger, ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state,EntityTypeManagerInterface $entityTypeManager,CurrentPathStack $currentPath, AccountInterface $account, LoggerChannelFactory $logger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -178,7 +180,6 @@ class RocketChatChannelBlock extends BlockBase implements ContainerFactoryPlugin
             }
           }
           if (!empty($channel) && $apiClient->ping()) {
-//            $this->messenger->addMessage(json_encode($fieldName, JSON_PRETTY_PRINT), MessengerInterface::TYPE_STATUS, $repeat = TRUE);
             $chatUser = [];
             $chatUserProxy = [];
             foreach ($groupUsers as $groupUser) {
@@ -193,10 +194,6 @@ class RocketChatChannelBlock extends BlockBase implements ContainerFactoryPlugin
               $this->Logger->error("Channel/Group Creation / Retrieval Failed");
               return [];
             }
-            //TODO if null react to it (failure or otherwise)
-//            $channel->addMember($apiClient, $chatGroupOwner);
-//            $channel->setOwner($chatGroupOwner);
-//            $channel->addMembers($apiClient, $chatUser);
           }
           else {
             if($apiClient->ping()) {
@@ -214,11 +211,6 @@ class RocketChatChannelBlock extends BlockBase implements ContainerFactoryPlugin
           $channelURL = $channel->getChannelURI();
           $targetURL = "$serverUrl$channelURL?layout=embedded";
         }
-        //    else {
-        //      $serverUrl = \Drupal::configFactory()->get('rocket_chat.settings')->get('server');
-        //      $targetURL = "$serverUrl";
-        //    }
-
 
         $build = [];
         $build['#cache']["max-age"] = 0;
@@ -271,17 +263,19 @@ class RocketChatChannelBlock extends BlockBase implements ContainerFactoryPlugin
    */
   private function canSeeDirectLinkButtons(Group $groupEntity,GroupMembership $groupMember){
     return FALSE;
-    //this does not work as intended needs more work before deployement.
-//    if($groupMember->hasPermission('use rocketchat direct links')){
-//      return TRUE;
-//    }
-//    if($groupEntity->hasPermission('use rocketchat direct links', $this->account)){
-//      return TRUE;
-//    }
-//    if($this->account->hasPermission('use rocketchat direct links')){
-//      return TRUE;
-//    }
-//    return FALSE;
+    //REMINDER this does not work as intended needs more work before deployement.
+    /*
+     * if($groupMember->hasPermission('use rocketchat direct links')){
+     *   return TRUE;
+     * }
+     * if($groupEntity->hasPermission('use rocketchat direct links', $this->account)){
+     *   return TRUE;
+     * }
+     * if($this->account->hasPermission('use rocketchat direct links')){
+     *   return TRUE;
+     * }
+     *   return FALSE;
+     */
   }
 
   /**
@@ -314,7 +308,7 @@ class RocketChatChannelBlock extends BlockBase implements ContainerFactoryPlugin
 
     /** @var EntityTypeManagerInterface $entityTypeManager */
     $entityTypeManager = $container->get("entity_type.manager");
-    
+
     /** @var \Drupal\Core\Path\CurrentPathStack $pathCurrent */
     $pathCurrent = $container->get('path.current');
 

@@ -32,7 +32,7 @@ class moduleHelper {
 //group_content
 
   /**
-   * @param \modules\contrib\rocket_chat\modules\rocket_chat_group\src\RocketChat\Drupal\group\Entity\GroupContent $entity
+   * @param \Drupal\group\Entity\GroupContent $entity
    * @param string $action
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -87,7 +87,7 @@ class moduleHelper {
         self::addLogEntry("no action taken on [$action] for Group [" . $groupSelected->id() . "]");
         break;
       case "insert":
-        //INserting something into a group content.
+        // Inserting something into a group content.
         $channel->getChannelProxy($apiClient);
         $channel->getChannelMembers($apiClient);
 
@@ -100,7 +100,6 @@ class moduleHelper {
           }
           unset($targetUser);
         }
-//        $ChatUsers = [];
         foreach ($GroupMembers as $groupMember){
           $rcUser = new RocketchatUser($rcState,$groupMember->getAccountName(),$groupMember->getEmail(),$groupMember->getDisplayName());
           $rcUser->getUserProxy($apiClient);
@@ -111,7 +110,7 @@ class moduleHelper {
         return;
         break;
       case "delete":
-        //INserting something into a group content.
+        // Inserting something into a group content.
         $channel->getChannelProxy($apiClient);
         $channel->getChannelMembers($apiClient);
 
@@ -124,19 +123,18 @@ class moduleHelper {
           }
           unset($targetUser);
         }
-        //        $ChatUsers = [];
         foreach ($GroupMembers as $groupMember){
           $rcUser = new RocketchatUser($rcState,$groupMember->getAccountName(),$groupMember->getEmail(),$groupMember->getDisplayName());
           $rcUser->getUserProxy($apiClient);
-          $channel;
+//          $channel;
           $removed = $channel->removeMember($apiClient, $rcUser);
+          //TODO log result of removal
         }
         $channels = new Channels($rcState, $apiClient);
         $channels->refreshCache(TRUE);
         return;
         break;
     }
-
 
     if($apiClient->isLoggedIn()){
       $channelProxy = $channel->getChannelProxy($apiClient);

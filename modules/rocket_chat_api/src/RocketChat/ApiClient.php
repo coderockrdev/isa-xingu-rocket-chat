@@ -118,7 +118,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
       $userId = $this->config->getElement("rocket_chat_uid");
       $userToken = $this->config->getElement("rocket_chat_uit");
       $guzzleConfig = [
-        'base_uri' => $this->config->getElement('rocket_chat_url', "http://localhost:3000") . '/api/',//v1/ removed for info.
+        'base_uri' => $this->config->getElement('rocket_chat_url', "http://localhost:3000") . '/api/', // NOTE: v1/ removed for info. as its Deprecated in 1.0.0
         'allow_redirects' => FALSE,
         'timeout' => 60,
         'debug' => $this->config->isDebug(),

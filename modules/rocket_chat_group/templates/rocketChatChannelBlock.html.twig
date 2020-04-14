@@ -1,7 +1,6 @@
 <script type="application/javascript">
   function ChatLogin(){
     let transferable;
-    // console.debug("Starting Login Call");
     timeout = setTimeout(function(){
       document.querySelector('iframe').contentWindow.postMessage({
         externalCommand: 'call-custom-oauth-login',

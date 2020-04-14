@@ -1,5 +1,6 @@
 <?php
 namespace Drupal\rocket_chat_api\RocketChat\Collection;
+use Drupal;
 use Drupal\rocket_chat_api\RocketChat\RocketChatStateinterface as StateInterface;
 use Drupal\rocket_chat_api\RocketChat\ApiClient;
 use Drupal\rocket_chat_api\RocketChat\Element\Channel;
@@ -32,7 +33,7 @@ class Groups implements CollectionInterface {
   public function __construct(StateInterface $state,ApiClient $apiClient) {
     $this->state = $state;
     $this->apiClient = $apiClient;
-    $this->Logger = \Drupal::logger("Rocket Chat API: Groups");
+    $this->Logger = Drupal::logger("Rocket Chat API: Groups");
   }
 
   public function getCache($forceReload = FALSE){

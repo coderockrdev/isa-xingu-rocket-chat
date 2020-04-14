@@ -1,6 +1,7 @@
 <?php
 namespace Drupal\rocket_chat_api\RocketChat\Collection;
 
+use Drupal;
 use Drupal\rocket_chat_api\RocketChat\RocketChatStateinterface as StateInterface;
 use Drupal\rocket_chat_api\RocketChat\ApiClient;
 use Drupal\rocket_chat_api\RocketChat\Element\Channel;
@@ -33,7 +34,7 @@ class Channels implements CollectionInterface {
   public function __construct(StateInterface $state,ApiClient $apiClient) {
     $this->state = $state;
     $this->apiClient = $apiClient;
-    $this->Logger = \Drupal::logger("Rocket Chat API: Channels");
+    $this->Logger = Drupal::logger("Rocket Chat API: Channels");
 
   }
 
@@ -68,8 +69,6 @@ class Channels implements CollectionInterface {
       $found = Channel::getAllChannelsBatched($this->apiClient, $channels);
       $channelIds = [];
       foreach ($channels as $channel){
-//        $channelJson = json_encode($channel);
-        $channelIds[] = $channel['_id'];
         $this->state->set(self::CHANNEL . $channel['_id'], $channel);
       }
       $this->state->set(self::LIST,$channelIds);

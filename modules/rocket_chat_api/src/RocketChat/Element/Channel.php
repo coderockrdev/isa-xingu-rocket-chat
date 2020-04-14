@@ -21,13 +21,14 @@ class Channel {
   const WRITE           = 0b01000;
   const BROADCAST       = 0b10000;
 
+  //Encodes like this: [Broadcast, Writeable Readable, public Channel, privateGroup]
   //                             BWRCG
   const DEFAULT_CHANNEL_TYPE = 0b01110;
 
   /**
    * @var int Masked value indicating what type of Channel this uses;
    */
-  protected $ChannelType = NULL;//0b0111;//self::READ & self::WRITE & self::PUBLIC_CHANNEL;
+  protected $ChannelType = NULL;
   protected $ChannelName = NULL;
 
   private $ChannelMembers = [];
@@ -174,9 +175,6 @@ class Channel {
    * @return bool|int
    */
   public function hasType($test){
-//    if($test === self::PRIVATE_CHANNEL){
-//      return (!$this->hasType(self::PUBLIC_CHANNEL));//Test if NOT public
-//    }
     return ($this->getChannelType() & $test) > 0;
   }
 
@@ -372,10 +370,8 @@ class Channel {
           $ChannelList = new Channels($drupal8State, $apiClient);
           //TODO needs to replaced by state cached version.
           $Channels = $ChannelList->getCache();
-//          Channel::getAllChannelsBatched($apiClient, $Channels);
           break;
         case "groups":
-          //TODO Replace with
           $GroupList = new Groups($drupal8State,$apiClient);
           $Channels = $GroupList->getCache();
           if(is_null($Channels) || empty($Channels)){
@@ -410,6 +406,8 @@ class Channel {
   /**
    * Get Channel Type (channels|groups) or (public | private type.
    * @return string
+   * @throws \Exception
+   * @throws \Exception
    */
   public function getChannelTypeName(){
     if ($this->hasType(Channel::PUBLIC_CHANNEL)) {
@@ -421,9 +419,8 @@ class Channel {
       //Private Group
     }
     else {
-      //TODO report this fail state!
+      //TODO report this fial state better!
       throw new Exception("ERROR!");
-//      return NULL;
     }
     return $methodBase;
   }
@@ -463,7 +460,7 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
         $members[] = $myProxy['body']['username'];
       }
     }
-    $options['json']['members'] = $members;//Member names to add...
+    $options['json']['members'] = $members; //Member names to add...
 
     $ret = $apiClient->postToRocketChat("$methodBase.create", $options);
     //todo implement error check
@@ -485,7 +482,7 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
         $ownerJson['json']["userId"] = $myId; //Current User
         $remOwn = $apiClient->postToRocketChat("$methodBase.removeOwner", $ownerJson);
 
-        //todo implement error check
+        //todo implement better error check
       }
     } else {
       $logger = drupal::logger("Rocket Chat API");
@@ -494,10 +491,8 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
     }
   }
   else {
-    //TODO REplace with
     $ret = [];
     $ret['body'] = [];
-//    $ret['body'][rtrim($methodBase,"s")] = [];
     $ret['body'][rtrim($methodBase,"s")] = $this->getFromList($Channels);
     $ret2 = $apiClient->getFromRocketChat("$methodBase.info", ["query" => ["roomName" => $this->getSafeChannelName()]]);
     $ret3 = $ret;
@@ -507,8 +502,10 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
 
   /**
    * @param \Drupal\rocket_chat_api\RocketChat\ApiClient $apiClient
-   * @param \Drupal\rocket_chat_api\RocketChat\Element\User[] $user
+   * @param \Drupal\rocket_chat_api\RocketChat\Element\User[] $users
    *
+   * @return array
+   * @return array
    * @throws \Exception
    */
   public function addMembers(ApiClient $apiClient, $users) {
@@ -523,6 +520,8 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
    * @param \Drupal\rocket_chat_api\RocketChat\ApiClient $apiClient
    * @param \Drupal\rocket_chat_api\RocketChat\Element\User $user
    *
+   * @return bool|mixed
+   * @return bool|mixed
    * @throws \Exception
    */
   public function addMember(ApiClient $apiClient, User $user){
@@ -541,7 +540,7 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
     }
     if(!$found){
       $user->getUserProxy($apiClient);
-      $method = $methodBase = $this->getChannelTypeName();//$user->getUserProxy($apiClient);
+      $method = $methodBase = $this->getChannelTypeName(); 
       $membersJson = [];
       $membersJson["json"] = [];
       $membersJson["json"]['roomId'] = $this->Channel['_id'];
@@ -550,7 +549,6 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
       $this->getAllChannelMembersBatched($apiClient,$members);
 
       return $ret['body']['status'];
-//      return $ret['body']['success'];
     }
     return false;
   }
@@ -571,7 +569,7 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
     }
     if($found){
       $user->getUserProxy($apiClient);
-      $method = $methodBase = $this->getChannelTypeName();//$user->getUserProxy($apiClient);
+      $method = $methodBase = $this->getChannelTypeName();
       $membersJson = [];
       $membersJson["json"] = [];
       $membersJson["json"]['roomId'] = $this->Channel['_id'];
@@ -580,7 +578,6 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
       $this->getAllChannelMembersBatched($apiClient,$members);
 
       return $ret['body']['status'];
-      //      return $ret['body']['success'];
     }
     return false;
   }
@@ -617,12 +614,6 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
   }
 
   public function changeChannelName(ApiClient $apiClient, string $newName){
-//    $this->getChannelProxy($apiClient);
-//    $state = \Drupal::service('state');
-//    $ChannelList = new Channels(new Drupal8State($state), $apiClient);
-//    $Channels = $ChannelList->getCachedChannels();
-//    $ret = $this->fetchChannel($Channels, $apiClient, $this->hasType(Channel::WRITE), $this->getChannelTypeName());
-//
     $channelProxy = $this->getChannelProxy($apiClient);
     if(strcmp($this->getSafeChannelName(), self::toSafeChannelName($newName) !== 0)){
       $methodBase = $this->getChannelTypeName();
@@ -631,7 +622,7 @@ private function fetchChannel(array &$Channels,ApiClient &$apiClient,bool $write
       $rename['json']['roomId'] = $this->Channel['_id'];
       $rename['json']['name'] = self::toSafeChannelName($newName);
       $ret = $apiClient->postToRocketChat($methodBase . ".rename",$rename);
-      //needs Check.
+      //TODO implement better Check.
       $this->Channel = $ret['body'][rtrim($methodBase, "s")];
       $state = Drupal::service('state');
       $ChannelList = new Channels(new Drupal8State($state), $apiClient);

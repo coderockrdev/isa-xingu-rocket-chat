@@ -52,7 +52,6 @@ class GroupChannelFormatter extends FormatterBase {
       if(empty($channelName)) {
         $channelName = "";
       } else {
-//        drupal_set_message("Raw ChannelName [" . $channelName . "]");
         $channelName = "#" . $channelName;
       }
       $elements[$key]['#type'] = "text_format";

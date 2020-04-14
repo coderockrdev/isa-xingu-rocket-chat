@@ -4,6 +4,7 @@
 namespace Drupal\rocket_chat\Form;
 
 
+use Drupal;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\Group;
 use Drupal\rocket_chat_api\RocketChat\ApiClient;
@@ -15,16 +16,17 @@ use Drupal\rocket_chat_api\RocketChat\Drupal8State;
 use Drupal\rocket_chat_api\RocketChat\Element\Channel;
 use Drupal\rocket_chat_api\RocketChat\Element\User;
 use Drupal\rocket_chat_group\RocketChat\moduleHelper;
+use Exception;
 
 class RocketChatGroupHelper {
 
   public static function rebuildRocketchatState(array &$form, FormStateInterface $form_state = NULL) {
-    $rcState = new Drupal8State(\Drupal::service('state'));
+    $rcState = new Drupal8State(Drupal::service('state'));
     $apiConfig = new Drupal8Config(
-      \Drupal::configFactory(),
-      \Drupal::moduleHandler(),
-      \Drupal::state(),
-      \Drupal::messenger()
+      Drupal::configFactory(),
+      Drupal::moduleHandler(),
+      Drupal::state(),
+      Drupal::messenger()
     );
     $apiClient = new ApiClient($apiConfig);
     $Channels = new Channels($rcState, $apiClient);
@@ -37,13 +39,13 @@ class RocketChatGroupHelper {
     if ($apiConfig->isReady()) {
 
       /** @var \Drupal\Core\Entity\EntityFieldManager $entityfieldManager */
-      $entityfieldManager = \Drupal::service('entity_field.manager');
+      $entityfieldManager = Drupal::service('entity_field.manager');
 
       /** @var array $fieldMapping */
       $fieldMapping = $entityfieldManager->getFieldMapByFieldType('channel');
 
       /** @var \Drupal\Core\Entity\Query\QueryInterface $groupseq */
-      $groupseq = \Drupal::entityQuery("group");
+      $groupseq = Drupal::entityQuery("group");
       $machineNames = [];
       foreach ($fieldMapping['group'] as $machinename => $definition) {
         $groupseq->exists($machinename);
@@ -73,7 +75,7 @@ class RocketChatGroupHelper {
           $members[] = $member;
           try {
             $member->getUserProxy($apiClient);
-          } catch (\Exception $e) {
+          } catch (Exception $e) {
             //TODO log user proxy failure!.
           }
         }
@@ -88,17 +90,15 @@ class RocketChatGroupHelper {
           try {
             $Channel->getChannelProxy($apiClient);
             $Channel->addMembers($apiClient, $members);
-          } catch (\Exception $e) {
+          } catch (Exception $e) {
             //Todo log proxy failure
           }
         }
-        \Drupal::messenger()
+        Drupal::messenger()
           ->addStatus("Group Channel | " . json_encode($fieldValue) . " | Group Type | " . json_encode($type) . " | Members " . count($members));
       }
-      //TODO only show error when errored!
-      //    \Drupal::messenger()->addError("Group Submit Pressed");
     } else {
-      \Drupal::messenger()->addError("Rocket Chat connection Failed");
+      Drupal::messenger()->addError("Rocket Chat connection Failed");
       if(!empty($form_state)){
         $form_state->setErrorByName('url',"Rocket Chat connection Failed, is this correct?");
       }
