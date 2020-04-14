@@ -2,6 +2,10 @@
 
 namespace Drupal\rocket_chat;
 
+use Drupal;
+use Exception;
+use HttpUrlException;
+
 /**
  * Copyright (c) 2016.
  *
@@ -33,6 +37,76 @@ namespace Drupal\rocket_chat;
 class Utility {
 
   /**
+   * Will test the host for connectivity (ony t* transports are used).
+   *
+   * @param string $host
+   * @param int $port
+   * @param string $path
+   *
+   * @return string
+   */
+  private static function transportTestUrl($host = "localhost", $port = 80, $path = "") {
+    $transports = stream_get_transports();
+    foreach ($transports as $index => $transport){
+      if(strtolower(substr($transport,0,1)) !== strtolower("t")){
+        unset($transports[$index]);
+      }
+    }
+    $connections = [];
+    $results = [];
+    $meta = [];
+    $working = [] ;
+    $processed = [];
+    $returnCode = [];
+    $errCode = [];
+    $errStr = [];
+    foreach ($transports as $index => $transport){
+      $conUrl = $transport . "://" . $host;// . $path . "/api/info";
+      try {
+        $connections[$index] = fsockopen($conUrl, $port, $errCode[$index], $errStr[$index], 15);
+
+        if ($connections[$index]) {
+          $state = stream_set_blocking($connections[$index], 1);
+          $bits = fwrite($connections[$index], "GET $path/api/info HTTP/1.1\r\nHost: $host\r\n\r\n");
+          $meta[$index] = stream_get_meta_data($connections[$index]);
+          $results[$index] = "";
+          while (!$oef = feof($connections[$index])) {
+            $meta[$index] = stream_get_meta_data($connections[$index]);
+            $buf = fread($connections[$index], 100);
+            if ($buf !== FALSE) {
+              $results[$index] = $results[$index] . $buf;
+            }
+            break;
+          }
+          $meta[$index] = stream_get_meta_data($connections[$index]);
+          $sections = explode("\r\n\r\n", $results[$index]);
+          foreach ($sections as $subIndex => $section) {
+            $processed[$index][$subIndex] = explode("\r\n", rtrim($section));
+          }
+          $returnCode[$index] = explode(" ", $processed[$index][0][0])[1];
+          $meta[$index] = stream_get_meta_data($connections[$index]);
+        }
+      } catch (Exception $exception){
+        $connections[$index] = FALSE;
+        //Error?
+      }
+      if($connections[$index]) {
+        $working[] = $transport;
+      }
+      if($connections[$index] !== FALSE) {
+        fclose($connections[$index]);
+      }
+    }
+    $selected = "";
+    foreach ($returnCode as $offset => $code){
+      if ($code == 200){
+        $selected = $transports[$offset];
+      }
+    }
+    return $selected;
+  }
+
+  /**
    * ServerRun.
    *
    * @param string $url
@@ -42,18 +116,18 @@ class Utility {
    *   Connection Worked?
    */
   public static function serverRun($url) {
-    $urlSplit = Utility::parseUrl($url);
     try {
-      if ($ping = fsockopen($urlSplit['url'], $urlSplit['port'], $errCode, $errStr, 10)) {
-        fclose($ping);
+      $urlSplit = Utility::parseUrl($url);
+      $ConnectionType = self::transportTestUrl($urlSplit['host'],$urlSplit['port'],$urlSplit['path']);
+      if(!empty($ConnectionType)){
+        Drupal::messenger()->addStatus(t("Connected to RocketChat through [@transport]",["@transport" => $ConnectionType]));
         return TRUE;
-      }
-      else {
+      } else {
         return FALSE;
       }
     }
-    catch (\Exception $exception) {
-      error_log("serverRun encountered and exception, check [$url] for valid URL");
+    catch (Exception $exception) {
+      error_log("serverRun encountered and exception, check [$url] for valid URL". $exception->getMessage());
       return FALSE;
     }
   }
@@ -73,7 +147,7 @@ class Utility {
   public static function parseUrl($url) {
     $returnValue = parse_url($url);
     if (!isset($returnValue['scheme'])) {
-      throw new \HttpUrlException("Missing Scheme.", 404);
+      throw new HttpUrlException("Missing Scheme.", 404);
     }
     if (!isset($returnValue['host'])) {
       $returnValue['hosts'] = 'localhost';
@@ -94,6 +168,7 @@ class Utility {
       }
     }
     $returnValue['baseUrl'] = $returnValue['host'] . $returnValue['path'];
+    $returnValue['orgScheme'] = $returnValue['scheme'];
     switch ($returnValue['scheme']) {
       default:
         $returnValue['url'] = "tcp://" . $returnValue['baseUrl'];

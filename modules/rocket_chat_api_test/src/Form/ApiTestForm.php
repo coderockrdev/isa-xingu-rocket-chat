@@ -31,6 +31,7 @@ namespace Drupal\rocket_chat_api_test\Form;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\rocket_chat_api\RocketChat\ApiClient;
 use Drupal\rocket_chat_api\RocketChat\Drupal8Config;
@@ -48,8 +49,22 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  */
 class ApiTestForm extends FormBase {
 
+  /**
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
   private $moduleHandler;
+
+  /**
+   * @var \Drupal\Core\State\StateInterface
+   */
   private $state;
+
+  /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
 
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
@@ -60,11 +75,13 @@ class ApiTestForm extends FormBase {
    *   The ModuleHandler to interact with loaded modules.
    * @param \Drupal\Core\State\StateInterface $state
    *   The StateInterface to manipulate state information.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state, MessengerInterface $messenger) {
     $this->setConfigFactory($config_factory);
     $this->moduleHandler = $moduleHandler;
     $this->state = $state;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -72,10 +89,23 @@ class ApiTestForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     if (!empty($container)) {
+      /** @var ConfigFactoryInterface $configFactory */
+      $configFactory = $container->get('config.factory');
+
+      /** @var ModuleHandlerInterface $modulehandler */
+      $modulehandler = $container->get('module_handler');
+
+      /** @var StateInterface $stateInterface */
+      $stateInterface = $container->get('state');
+
+      /** @var MessengerInterface $messenger */
+      $messenger = $container->get('messenger');
+
       return new static(
-        $container->get("config.factory"),
-        $container->get("module_handler"),
-        $container->get("state")
+        $configFactory,
+        $modulehandler,
+        $stateInterface,
+        $messenger
       );
     }
     else {
@@ -157,7 +187,8 @@ class ApiTestForm extends FormBase {
     $apiConfig = new Drupal8Config(
       $this->configFactory,
       $this->moduleHandler,
-      $this->state
+      $this->state,
+      $this->messenger
     );
     $apiClient = new ApiClient($apiConfig);
     switch ($form_state->getValue('verb')) {
@@ -185,8 +216,7 @@ class ApiTestForm extends FormBase {
         break;
 
     }
-
-    drupal_set_message(
+    $this->messenger->addStatus(
       $result['status'] . ': ' .
       var_export($result['body'], TRUE)
     );

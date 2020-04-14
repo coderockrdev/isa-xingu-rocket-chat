@@ -9,6 +9,8 @@ namespace Drupal\rocket_chat_api\RocketChat {
    * Time: 12:07
    */
 
+  use InvalidArgumentException;
+
   /**
    * Class InMemoryConfig keeps the config in memory.
    *
@@ -108,7 +110,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
           return $this->utk;
 
         default:
-          throw new \InvalidArgumentException("[$elementName] not found", 144);
+          throw new InvalidArgumentException("[$elementName] not found", 144);
       }
     }
 
@@ -128,7 +130,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
           return $this->utk = $newValue;
 
         default:
-          throw new \InvalidArgumentException("[$elementName] not found", 144);
+          throw new InvalidArgumentException("[$elementName] not found", 144);
       }
     }
 
@@ -153,6 +155,26 @@ namespace Drupal\rocket_chat_api\RocketChat {
       return $this->superConfig->notify($message, $type);
     }
 
+    /**
+     * Check if we got everything to connect to a Client.
+     *
+     * @return bool
+     */
+    public function isReady() {
+      return !empty($this->url) &&
+      (
+        !empty($this->user) && !empty($this->uid)
+      ) && (
+        !empty($this->utk) && !empty($this->password)
+      );
   }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function log($message, $level) {
+      $this->superConfig->log($message, $level);
+    }
+
+  }
 }

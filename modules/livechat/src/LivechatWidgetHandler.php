@@ -2,6 +2,8 @@
 
 namespace Drupal\livechat;
 
+use Drupal;
+
 /**
  * Copyright (c) 2016.
  *
@@ -177,7 +179,7 @@ class LivechatWidgetHandler {
     if (!empty($key) && !is_null($key)) {
       switch ($key) {
         case 'server':
-          $this->buildJavaScriptArray('server', \Drupal::config('rocket_chat.settings')->get('server'));
+          $this->buildJavaScriptArray('server', Drupal::config('rocket_chat.settings')->get('server'));
           break;
 
         default:

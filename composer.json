@@ -18,5 +18,13 @@
         "source": "https://cgit.drupalcode.org/rocket_chat"
     },
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+       "ext-http": "*",
+       "ext-json": "*",
+       "php": "^7.2",
+       "drupal/core": "9.1.x-dev"
+    },
+    "require-dev": {
+        "drupal/coder": "^8.3"
+    }
 }

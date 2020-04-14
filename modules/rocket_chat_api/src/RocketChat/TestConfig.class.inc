@@ -91,7 +91,19 @@ namespace Drupal\rocket_chat_api\RocketChat {
       return fwrite(STDERR, "Message [$type=>$message]\n");
     }
 
-  }
+    /**
+     * Log a specific action
+     *
+     * @param $message
+     *   Message to log.
+     * @param $level
+     *   a string value if either "error"|"warning"|"info"|"debug" to indicate the level of this log message.
+     *
+     * @return void
+     */
+    public function log($message, $level) {
+      self::notify($message, $level);
+}}
 
 }
 

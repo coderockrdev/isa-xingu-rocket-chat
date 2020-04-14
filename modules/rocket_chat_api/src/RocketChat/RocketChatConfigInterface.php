@@ -1,7 +1,4 @@
 <?php
-
-namespace Drupal\rocket_chat_api\RocketChat {
-
   /*
    * Created by 040lab b.v. using PhpStorm from Jetbrains.
    * User: Lawri van Buël
@@ -9,6 +6,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
    * Time: 16:33
    */
 
+namespace Drupal\rocket_chat_api\RocketChat {
 
   /**
    * Interface to make an Arbitrary storage backend for the config elements.
@@ -16,6 +14,13 @@ namespace Drupal\rocket_chat_api\RocketChat {
    * @package RocketChat
    */
   interface RocketChatConfigInterface {
+
+
+    /**
+     * Check if we got everythingto connect to a Client.
+     * @return bool
+     */
+    public function isReady();
 
     /**
      * Get a RocketChatConfigInterface Element.
@@ -69,5 +74,14 @@ namespace Drupal\rocket_chat_api\RocketChat {
      */
     public function notify($message, $type);
 
+    /**
+     * Log a specific action
+     * @param string $message
+     *   Message to log.
+     * @param mixed $level
+     *   any of the valid log levels as defined for \Psr\Log.
+     * @return void
+     */
+    public function log($message, $level);
   }
 }

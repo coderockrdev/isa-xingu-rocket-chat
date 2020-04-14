@@ -1,0 +1,32 @@
+<script type="application/javascript">
+  function ChatLogin(){
+    let transferable;
+    // console.debug("Starting Login Call");
+    timeout = setTimeout(function(){
+      document.querySelector('iframe').contentWindow.postMessage({
+        externalCommand: 'call-custom-oauth-login',
+        service: 'drupal'
+      }, '{{ url|default('*') }}',transferable);
+      console.log(transferable);
+    },2000);
+    window.addEventListener("message",function(ev){
+      if(ev.data.eventName == "room-opened"){
+        console.log("iframeMessageTest");
+        clearTimeout(timeout);
+      }
+    },false);
+  }
+</script>
+<div class="rocketChatChannelBlock">
+  {%  if showDirectLink %}
+    <div class="alert alert-danger alert-dismissible card-radius" style="margin-bottom: 3px;">
+      <a href="{{ host }}" class="btn btn-secondary btn-raised waves-effect waves-btn waves-light button--primary" type="button" target="_blank">Go To Chat</a>
+      <a href="{{ app }}" id="LinkToRocketChatAppButton" type="button" style="float: right" class="btn btn-accent btn-danger btn-raised waves-effect waves-btn waves-light" target="_blank">To App</a>
+    </div>
+  {% endif %}
+  <iframe id="rocketChatChannelFrame" src="{{ url|raw }}" width="{{ width }}" height="{{ height }}" onload="ChatLogin()" sandbox="allow-popups allow-scripts allow-forms allow-same-origin">
+  </iframe>
+  <noscript>
+    <a href="{{ url|raw }}" target="_blank"><button>{{ 'Press here to Open chat'|t }}</button></a>
+  </noscript>
+</div>

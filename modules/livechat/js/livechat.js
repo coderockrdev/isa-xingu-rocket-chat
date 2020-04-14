@@ -25,24 +25,25 @@
 (function ($) {
   'use strict';
   // Server params.
-  var DEFAULT = {
+  let DEFAULT = {
     url: 'http://localhost:3000'
   };
   DEFAULT.toString();
 
-  var USER = {
+  let USER = {
     url: drupalSettings.livechat.rocket_chat_conf.server
   };
 
   // The embed javascript livechat code.
   (function (w, d, s, u) {
-    w.RocketChat = function (c) { w.RocketChat._.push(c); }; w.RocketChat._ = []; w.RocketChat.url = u;
-    var h;
-    var j;
+    w.RocketChat = function (c) {w.RocketChat._.push(c); };
+    w.RocketChat._ = []; w.RocketChat.url = u;
+    let h;
+    let j;
     h = d.getElementsByTagName(s)[0];
     j = d.createElement(s);
     j.async = true;
-    j.src = USER['url'] + '/packages/rocketchat_livechat/assets/rocket-livechat.js';
+    j.src = USER['url'] + '/livechat/rocketchat-livechat.min.js';
     h.parentNode.insertBefore(j, h);
   })(window, document, 'script', USER['url'] + '/livechat');
 

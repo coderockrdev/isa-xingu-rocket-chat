@@ -12,6 +12,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
   use Drupal\Core\Config\ConfigFactoryInterface;
   use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
   use Drupal\Core\Extension\ModuleHandlerInterface;
+  use Drupal\Core\Messenger\MessengerInterface;
   use Drupal\Core\State\StateInterface;
   use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -34,9 +35,27 @@ namespace Drupal\rocket_chat_api\RocketChat {
      */
     protected $config;
 
+    /**
+     * @var \Drupal\Core\Extension\ModuleHandlerInterface
+     */
     protected $moduleHandler;
 
+    /**
+     * @var \Drupal\Core\State\StateInterface
+     */
     protected $state;
+
+    /**
+     * The messenger.
+     *
+     * @var \Drupal\Core\Messenger\MessengerInterface
+     */
+    protected $messenger;
+
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected  $Logger;
 
     /**
      * Constructs a \Drupal\system\ConfigFormBase object.
@@ -48,20 +67,35 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * @param \Drupal\Core\State\StateInterface $state
      *   The state interface to manipulate the States.
      */
-    public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state) {
+    public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, StateInterface $state, MessengerInterface $messenger) {
       $this->config = $config_factory->get('rocket_chat.settings');
       $this->moduleHandler = $moduleHandler;
       $this->state = $state;
+      $this->messenger = $messenger;
+      $this->Logger = \Drupal::logger("Rocket Chat API: Config");
     }
 
     /**
      * {@inheritdoc}
      */
     public static function create(ContainerInterface $container) {
+      /** @var ConfigFactoryInterface $configFactory */
+      $configFactory = $container->get('config.factory');
+
+      /** @var ModuleHandlerInterface $modulehandler */
+      $modulehandler = $container->get('module_handler');
+
+      /** @var StateInterface $stateInterface */
+      $stateInterface = $container->get('state');
+
+      /** @var MessengerInterface $messenger */
+      $messenger = $container->get('messenger');
+
       return new static(
-        $container->get('config.factory'),
-        $container->get('module_handler'),
-        $container->get('state')
+        $configFactory,
+        $modulehandler,
+        $stateInterface,
+        $messenger
       );
     }
 
@@ -70,6 +104,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      */
     public function getElement($elementName, $default = NULL) {
       switch ($elementName) {
+        /** @noinspection PhpMissingBreakStatementInspection */
         case 'rocket_chat_url':
           // Fallthrough and modify.
           $elementName = "server";
@@ -95,6 +130,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
     public function setElement($elementName, $newValue) {
       $config = $this->config;
       switch ($elementName) {
+        /** @noinspection PhpMissingBreakStatementInspection */
         case 'rocket_chat_url':
           // Fallthrough and modify.
           $elementName = "url";
@@ -111,7 +147,6 @@ namespace Drupal\rocket_chat_api\RocketChat {
             $this->state->set($elementName, $newValue);
           }
           break;
-
       }
     }
 
@@ -119,7 +154,7 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * {@inheritdoc}
      */
     public function isDebug() {
-      return $this->moduleHandler->moduleExists('devel');
+      return $this->state->get("rocket.chat.debugMode", FALSE);
     }
 
     /**
@@ -133,9 +168,34 @@ namespace Drupal\rocket_chat_api\RocketChat {
      * {@inheritdoc}
      */
     public function notify($message, $type) {
-      return drupal_set_message($message, $type);
+      return $this->messenger->addMessage("$message",$type);
     }
 
+    /**
+     * Check if we got everything to connect to a Client.
+     *
+     * @return bool
+     */
+    public function isReady() {
+      return (
+        !empty($this->getElement('rocket_chat_url')) &&
+        !empty($this->getElement('rocket_chat_uid')) &&
+        !empty($this->getElement('rocket_chat_uit'))
+      );
   }
 
+    /**
+     * Log a specific action
+     *
+     * @param $message
+     *   Message to log.
+     * @param $level
+     *   a string value if either "error"|"warning"|"info"|"debug" to indicate the level of this log message.
+     *
+     * @return void
+     */
+    public function log($message, $level) {
+      $this->Logger->log($level, $message);
+    }
+  }
 }

@@ -1,0 +1,72 @@
+<?php
+
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Console\Core\Command\Exclude\DrupliconCommand;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\rocket_chat_group\RocketChat\moduleHelper;
+
+
+//Create
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * @param \Drupal\group\Entity\GroupContent $entity
+ */
+function rocket_chat_group_group_content_insert(Drupal\group\Entity\GroupContent $entity) {
+  try {
+    moduleHelper::ProcessGroupContentUpdate($entity, "insert");
+  } catch (InvalidPluginDefinitionException $e) {
+    Drupal::messenger()->addError("Something went wrong, please notify the Site Admin");
+    Drupal::logger("Rocket Chat : Base Module")->critical($e->getMessage());
+  } catch (PluginNotFoundException $e) {
+    Drupal::messenger()->addError("Something went wrong, please notify the Site Admin");
+    Drupal::logger("Rocket Chat : Base Module")->critical($e->getMessage());
+  }
+}
+
+//Read, we do not care about Reading.
+
+//Update
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function rocket_chat_group_group_content_update(Drupal\group\Entity\GroupContent $entity) {
+  try {
+    moduleHelper::ProcessGroupContentUpdate($entity, "update");
+  } catch (InvalidPluginDefinitionException $e) {
+    Drupal::messenger()->addError("Something went wrong, please notify the Site Admin");
+    Drupal::logger("Rocket Chat : Base Module")->critical($e->getMessage());
+  } catch (PluginNotFoundException $e) {
+    Drupal::messenger()->addError("Something went wrong, please notify the Site Admin");
+    Drupal::logger("Rocket Chat : Base Module")->critical($e->getMessage());
+  }
+}
+
+//Delete
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function rocket_chat_group_group_content_delete(Drupal\group\Entity\GroupContent $entity) {
+  try {
+    moduleHelper::ProcessGroupContentUpdate($entity, "delete");
+  } catch (InvalidPluginDefinitionException $e) {
+    Drupal::messenger()->addError("Something went wrong, please notify the Site Admin");
+    Drupal::logger("Rocket Chat : Base Module")->critical($e->getMessage());
+  } catch (PluginNotFoundException $e) {
+    Drupal::messenger()->addError("Something went wrong, please notify the Site Admin");
+    Drupal::logger("Rocket Chat : Base Module")->critical($e->getMessage());
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function rocket_chat_group_theme($existing, $type, $theme, $path) {
+  return moduleHelper::themeRocketChannelBLock($existing, $type, $theme, $path);
+}
+
+
+
+

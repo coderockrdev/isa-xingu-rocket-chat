@@ -3,7 +3,8 @@ type: module
 description: Quick Test page that utilizes the Rocket chat API module to do API calls on the configured Rocket chat.
 package: Rocket.Chat
 core: 8.x
+core_version_requirement: ^8 || ^9
 dependencies:
   - rocket_chat:rocket_chat_api
 configure: apitest.form
-php: 5.6
+php: 7.3

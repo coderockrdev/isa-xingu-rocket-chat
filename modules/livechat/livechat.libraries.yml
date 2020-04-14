@@ -1,6 +1,6 @@
 # Route to enable the usage of the js required file
 rocket_chat_conf:
-  version: 1.x
+  version: 2.x
   js:
     js/livechat.js: {}
   dependencies:
