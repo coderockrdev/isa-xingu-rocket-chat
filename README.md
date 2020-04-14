@@ -1,4 +1,4 @@
-#_Rocket.chat_ Module for Drupal 8.x-2.x
+#_Rocket.chat_ Module for Drupal 8.x-2.2
 
 CONTENTS OF THIS FILE
 ---------------------
@@ -111,4 +111,7 @@ Previous Authors (Hall of Fame)
  - [idevit](https://www.drupal.org/u/idevit) (Community Plumbing).
  - [jelhouss](https://www.drupal.org/u/jelhouss) (Initial Module Creator).
 
+This version marks the EoL for the 8.x-1.x branch, and the (only privatly released) 8.x-2.1 and 8.x-2.0.
+
 Last Updated, 14-April-2020.
+
