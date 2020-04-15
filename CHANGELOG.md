@@ -1,6 +1,7 @@
 # Changelog
 Version:
  - 8.x-2.x
+ - 8.x-2.3
     - Fix for Issue [#3127682](https://www.drupal.org/project/rocket_chat/issues/3127682): rocket_chat 2.2.0 requires drupal/core 9.1.x-dev
  - 8.x-2.2
     - Public release of 2.x branch
