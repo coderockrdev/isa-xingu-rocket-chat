@@ -21,7 +21,7 @@
     "require": {
        "ext-http": "*",
        "ext-json": "*",
-       "php": "^7.3",
+       "php": "^7.2",
        "drupal/core": "^8.8 || ^9"
     },
     "require-dev": {
