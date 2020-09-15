@@ -19,7 +19,6 @@
     },
     "minimum-stability": "dev",
     "require": {
-       "ext-http": "*",
        "ext-json": "*",
        "php": "^7.2",
        "drupal/core": "^8.8 || ^9"
