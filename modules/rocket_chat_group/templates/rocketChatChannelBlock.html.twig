@@ -23,7 +23,7 @@
       <a href="{{ app }}" id="LinkToRocketChatAppButton" type="button" style="float: right" class="btn btn-accent btn-danger btn-raised waves-effect waves-btn waves-light" target="_blank">To App</a>
     </div>
   {% endif %}
-  <iframe id="rocketChatChannelFrame" src="{{ url|raw }}" width="{{ width }}" height="{{ height }}" onload="ChatLogin()" sandbox="allow-popups allow-scripts allow-forms allow-same-origin">
+  <iframe id="rocketChatChannelFrame" title="Chat windowframe" src="{{ url|raw }}" width="{{ width }}" height="{{ height }}" onload="ChatLogin()" sandbox="allow-popups allow-scripts allow-forms allow-same-origin">
   </iframe>
   <noscript>
     <a href="{{ url|raw }}" target="_blank"><button>{{ 'Press here to Open chat'|t }}</button></a>
