@@ -187,7 +187,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       $form['rocketchatRefreshCache']['#disabled'] = TRUE;
     }
 
-    if($this->moduleHandler->getModule("rocket_chat_group")){
+    if($this->moduleHandler->moduleExists("rocket_chat_group")){
       $form['rocketchatRefreshGroups'] = [
         '#type' => 'button',
         '#value' => $this->t("Rebuild Groups Channels"),
