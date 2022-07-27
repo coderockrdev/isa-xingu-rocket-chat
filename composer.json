@@ -23,6 +23,9 @@
        "php": "^7.4 || ^8",
        "drupal/core": "^9.4 || ^10"
     },
+    "suggest": {
+        "drupal/group": "^1.4"
+    },
     "require-dev": {
         "drupal/coder": "^8.3"
     }

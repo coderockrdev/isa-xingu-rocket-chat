@@ -2,8 +2,7 @@ name: Rocket Chat Livechat Block
 type: module
 description: Livechat block.
 package: Rocket.Chat
-core: 8.x
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9.4 || ^10
 dependencies:
   - drupal:block
   - rocket_chat:rocket_chat
