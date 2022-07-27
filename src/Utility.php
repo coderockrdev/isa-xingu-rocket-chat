@@ -47,20 +47,20 @@ class Utility {
    */
   private static function transportTestUrl($host = "localhost", $port = 80, $path = "") {
     $transports = stream_get_transports();
-    foreach ($transports as $index => $transport){
-      if(strtolower(substr($transport,0,1)) !== strtolower("t")){
+    foreach ($transports as $index => $transport) {
+      if (strtolower(substr($transport, 0, 1)) !== strtolower("t")) {
         unset($transports[$index]);
       }
     }
     $connections = [];
     $results = [];
     $meta = [];
-    $working = [] ;
+    $working = [];
     $processed = [];
     $returnCode = [];
     $errCode = [];
     $errStr = [];
-    foreach ($transports as $index => $transport){
+    foreach ($transports as $index => $transport) {
       $conUrl = $transport . "://" . $host;// . $path . "/api/info";
       try {
         $connections[$index] = fsockopen($conUrl, $port, $errCode[$index], $errStr[$index], 15);
@@ -86,20 +86,21 @@ class Utility {
           $returnCode[$index] = explode(" ", $processed[$index][0][0])[1];
           $meta[$index] = stream_get_meta_data($connections[$index]);
         }
-      } catch (Exception $exception){
+      }
+      catch (Exception $exception) {
         $connections[$index] = FALSE;
         //Error?
       }
-      if($connections[$index]) {
+      if ($connections[$index]) {
         $working[] = $transport;
       }
-      if($connections[$index] !== FALSE) {
+      if ($connections[$index] !== FALSE) {
         fclose($connections[$index]);
       }
     }
     $selected = "";
-    foreach ($returnCode as $offset => $code){
-      if ($code == 200){
+    foreach ($returnCode as $offset => $code) {
+      if ($code == 200) {
         $selected = $transports[$offset];
       }
     }
@@ -118,16 +119,18 @@ class Utility {
   public static function serverRun($url) {
     try {
       $urlSplit = Utility::parseUrl($url);
-      $ConnectionType = self::transportTestUrl($urlSplit['host'],$urlSplit['port'],$urlSplit['path']);
-      if(!empty($ConnectionType)){
-        Drupal::messenger()->addStatus(t("Connected to RocketChat through [@transport]",["@transport" => $ConnectionType]));
+      $ConnectionType = self::transportTestUrl($urlSplit['host'], $urlSplit['port'], $urlSplit['path']);
+      if (!empty($ConnectionType)) {
+        Drupal::messenger()
+          ->addStatus(t("Connected to RocketChat through [@transport]", ["@transport" => $ConnectionType]));
         return TRUE;
-      } else {
+      }
+      else {
         return FALSE;
       }
     }
     catch (Exception $exception) {
-      error_log("serverRun encountered and exception, check [$url] for valid URL". $exception->getMessage());
+      error_log("serverRun encountered and exception, check [$url] for valid URL" . $exception->getMessage());
       return FALSE;
     }
   }

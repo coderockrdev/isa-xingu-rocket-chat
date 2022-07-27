@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Drupal\rocket_chat\Form;
-
 
 use Drupal;
 use Drupal\Core\Form\FormStateInterface;
@@ -75,7 +73,8 @@ class RocketChatGroupHelper {
           $members[] = $member;
           try {
             $member->getUserProxy($apiClient);
-          } catch (Exception $e) {
+          }
+          catch (Exception $e) {
             //TODO log user proxy failure!.
           }
         }
@@ -90,18 +89,21 @@ class RocketChatGroupHelper {
           try {
             $Channel->getChannelProxy($apiClient);
             $Channel->addMembers($apiClient, $members);
-          } catch (Exception $e) {
+          }
+          catch (Exception $e) {
             //Todo log proxy failure
           }
         }
         Drupal::messenger()
           ->addStatus("Group Channel | " . json_encode($fieldValue) . " | Group Type | " . json_encode($type) . " | Members " . count($members));
       }
-    } else {
+    }
+    else {
       Drupal::messenger()->addError("Rocket Chat connection Failed");
-      if(!empty($form_state)){
-        $form_state->setErrorByName('url',"Rocket Chat connection Failed, is this correct?");
+      if (!empty($form_state)) {
+        $form_state->setErrorByName('url', "Rocket Chat connection Failed, is this correct?");
       }
     }
   }
+
 }

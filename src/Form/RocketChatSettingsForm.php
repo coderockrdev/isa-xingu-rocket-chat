@@ -30,9 +30,13 @@ namespace Drupal\rocket_chat\Form;
  * Any configuration enhancement must be done within.
  */
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\State\StateInterface;
+use Drupal\rocket_chat\Utility;
 use Drupal\rocket_chat_api\RocketChat\ApiClient;
 use Drupal\rocket_chat_api\RocketChat\Collection\Channels;
 use Drupal\rocket_chat_api\RocketChat\Collection\Groups;
@@ -43,10 +47,6 @@ use Drupal\rocket_chat_api\RocketChat\InMemoryConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\rocket_chat\Utility;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class RocketChatSettingsForm.
@@ -54,6 +54,13 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  * @package Drupal\rocket_chat\Form
  */
 class RocketChatSettingsForm extends ConfigFormBase {
+
+  /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
 
   /**
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -64,13 +71,6 @@ class RocketChatSettingsForm extends ConfigFormBase {
    * @var \Drupal\Core\State\StateInterface
    */
   private $state;
-
-  /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
 
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
@@ -111,6 +111,39 @@ class RocketChatSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Alternative submit handler for Button Precces that do not safe.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   */
+  public static function altSubmitForm(array &$form, FormStateInterface $form_state) {
+    /** @var RocketChatSettingsForm $formObject */
+    $formObject = $form_state->getFormObject();
+    $apiConfig = new Drupal8Config($formObject->configFactory(), $formObject->moduleHandler, $formObject->state, $formObject->messenger);
+    $apiClient = new ApiClient($apiConfig);
+
+    if ($apiConfig->isReady()) {
+      $RocketChatState = new Drupal8State($formObject->state);
+      $Channels = new Channels($RocketChatState, $apiClient);
+      $Channels->refreshCache(TRUE);
+      $Groups = new Groups($RocketChatState, $apiClient);
+      $Groups->refreshCache(TRUE);
+      $Users = new Users($RocketChatState, $apiClient);
+      $Users->refreshCache(TRUE);
+    }
+  }
+
+  /**
+   * Alternative submit handler for Button Precces that do not safe.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   */
+  public static function groupsSubmitForm(array &$form, FormStateInterface $form_state) {
+    RocketChatGroupHelper::rebuildRocketchatState($form, $form_state);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -120,18 +153,11 @@ class RocketChatSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
-    return ['rocket_chat.settings'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function buildForm(array $form, FormStateInterface $form_state, Request $request = NULL) {
 
     $config = $this->config('rocket_chat.settings');
     $server = $config->get('server');
-    $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state,$this->messenger);
+    $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state, $this->messenger);
 
     $form['url'] = [
       '#type' => 'url',
@@ -158,10 +184,10 @@ class RocketChatSettingsForm extends ConfigFormBase {
         '#attributes' => [
           'autocomplete' => "new-password",
           'placeholder' =>
-            (empty($user) ? "(Rocket chat Admin user name)" : $user ),
+            (empty($user) ? "(Rocket chat Admin user name)" : $user),
         ],
       ];
-      if(!empty($user)){
+      if (!empty($user)) {
         $form['rocketchat_admin']['#defaultvalue'] = $user;
       }
       $form['rocketchat_key'] = [
@@ -179,23 +205,33 @@ class RocketChatSettingsForm extends ConfigFormBase {
     $form['rocketchatRefreshCache'] = [
       '#type' => 'button',
       '#value' => $this->t("Rebuild Rocketchat Cache"),
-      "#submit" => [['\Drupal\rocket_chat\Form\RocketChatSettingsForm','altSubmitForm']],
+      "#submit" => [
+        [
+          '\Drupal\rocket_chat\Form\RocketChatSettingsForm',
+          'altSubmitForm',
+        ],
+      ],
       "#limit_validation_errors" => FALSE,
       '#executes_submit_callback' => TRUE,
     ];
-    if(!$apiConfig->isReady()) {
+    if (!$apiConfig->isReady()) {
       $form['rocketchatRefreshCache']['#disabled'] = TRUE;
     }
 
-    if($this->moduleHandler->moduleExists("rocket_chat_group")){
+    if ($this->moduleHandler->moduleExists("rocket_chat_group")) {
       $form['rocketchatRefreshGroups'] = [
         '#type' => 'button',
         '#value' => $this->t("Rebuild Groups Channels"),
-        "#submit" => [['\Drupal\rocket_chat\Form\RocketChatSettingsForm','groupsSubmitForm']],
+        "#submit" => [
+          [
+            '\Drupal\rocket_chat\Form\RocketChatSettingsForm',
+            'groupsSubmitForm',
+          ],
+        ],
         "#limit_validation_errors" => FALSE,
         '#executes_submit_callback' => TRUE,
       ];
-      if(!$apiConfig->isReady()) {
+      if (!$apiConfig->isReady()) {
         $form['rocketchatRefreshGroups']['#disabled'] = TRUE;
       }
     }
@@ -212,7 +248,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
       $smokeCheck = Utility::serverRun($form_state->getValue('url'));
       $info = [];
       if ($smokeCheck) {
-        $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state,$this->messenger);
+        $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state, $this->messenger);
         $empty = "";
         $memConfig = new InMemoryConfig($apiConfig, $empty, $empty);
         $memConfig->setElement('rocket_chat_url', $form_state->getValue('url'));
@@ -254,7 +290,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
           'Updated the Rocketchat [@oldurl] -> [@url]',
           [
             '@url' => $form_url,
-            "@oldurl" => (empty($oldUrl) ? $this->t("Not Set") : $oldUrl)
+            "@oldurl" => (empty($oldUrl) ? $this->t("Not Set") : $oldUrl),
           ]
         )
       );
@@ -267,7 +303,7 @@ class RocketChatSettingsForm extends ConfigFormBase {
     }
 
     if (!empty($form_user) || !empty($form_secret)) {
-      $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state,$this->messenger);
+      $apiConfig = new Drupal8Config($this->configFactory(), $this->moduleHandler, $this->state, $this->messenger);
 
       $user = (empty($form_user) ? $config->get('user') : $form_user);
       $secret = (empty($form_secret) ? $config->get('secret') : $form_secret);
@@ -316,37 +352,13 @@ class RocketChatSettingsForm extends ConfigFormBase {
         $this->t('Updated the Rocketchat Admin Password')
       );
     }
-    }
-
-  /**
-   * Alternative submit handler for Button Precces that do not safe.
-   * @param array $form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   */
-  public static function altSubmitForm(array &$form, FormStateInterface $form_state){
-    /** @var RocketChatSettingsForm  $formObject */
-    $formObject = $form_state->getFormObject();
-    $apiConfig = new Drupal8Config($formObject->configFactory(), $formObject->moduleHandler, $formObject->state, $formObject->messenger);
-    $apiClient = new ApiClient($apiConfig);
-
-    if($apiConfig->isReady()){
-       $RocketChatState = new Drupal8State($formObject->state);
-       $Channels = new Channels($RocketChatState, $apiClient);
-       $Channels->refreshCache(TRUE);
-       $Groups = new Groups($RocketChatState, $apiClient);
-       $Groups->refreshCache(TRUE);
-       $Users = new Users($RocketChatState, $apiClient);
-       $Users->refreshCache(TRUE);
-    }
   }
 
   /**
-   * Alternative submit handler for Button Precces that do not safe.
-   * @param array $form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * {@inheritdoc}
    */
-  public static function groupsSubmitForm(array &$form, FormStateInterface $form_state) {
-    RocketChatGroupHelper::rebuildRocketchatState($form,$form_state);
+  protected function getEditableConfigNames() {
+    return ['rocket_chat.settings'];
   }
 
 }

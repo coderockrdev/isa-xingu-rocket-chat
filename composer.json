@@ -20,8 +20,8 @@
     "minimum-stability": "dev",
     "require": {
        "ext-json": "*",
-       "php": "^7.2",
-       "drupal/core": "^8.8 || ^9"
+       "php": "^7.4 || ^8",
+       "drupal/core": "^9.4 || ^10"
     },
     "require-dev": {
         "drupal/coder": "^8.3"
