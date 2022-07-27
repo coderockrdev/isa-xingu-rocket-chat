@@ -1,4 +1,4 @@
-# _Rocket.chat_ Module for Drupal 8.x-2.x
+# _Rocket.chat_ Module for Drupal 9 / 10 Version 3.0.x
 
 
 CONTENTS OF THIS FILE

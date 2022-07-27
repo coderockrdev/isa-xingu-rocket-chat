@@ -1,5 +1,9 @@
 # Changelog
 Version:
+ - 3.0.x
+    - Switched to Semantic Versioning
+    - Bumped PHP version to 7.4 minimum
+    - Bumped to support Drupal ^9.4  & ^10
  - 8.x-2.x
  - 8.x-2.3
     - Fix for Issue [#3127682](https://www.drupal.org/project/rocket_chat/issues/3127682): rocket_chat 2.2.0 requires drupal/core 9.1.x-dev
