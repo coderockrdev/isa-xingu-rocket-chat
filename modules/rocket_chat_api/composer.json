@@ -12,6 +12,6 @@
     "require": {
         "guzzlehttp/guzzle": "^6.2",
         "php": "^7.4 || ^8",
-        "drupal/core": "^8.8 || ^9"
+        "drupal/core": "^8 || ^9 || ^10"
     }
 }
