@@ -21,7 +21,7 @@
     "require": {
        "ext-json": "*",
        "php": "^7.4 || ^8",
-       "drupal/core": "^8 || ^9 || ^10"
+       "drupal/core": "^8 || ^9 || ^10 || ^11"
     },
     "suggest": {
         "drupal/group": "^1.4"
